@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/{{ config.theme }}.css?{{ misc.random }}" />
+  <script type="text/javascript" src="js/main.js?{{ misc.random }}"></script>
+  <title>{{ config.title }} - {{ head.title }}</title>
+</head>
+
+<body>
+  <div id="top">
+    <div id="banner">
+      {{ body.banner }}
+    </div>
+    <div id="important">
+      {{ config.important }}
+    </div>
+    <div id="topFixed">
+      {{ body.topFixed }}
+    </div>
+  </div>
+  <div id="inner">
+    {{ body.inner }}
+  </div>
+  <div id="bottom">
+    {{ body.bottom }}
+  </div>
+</body>
+</html>

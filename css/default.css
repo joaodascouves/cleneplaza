@@ -1,0 +1,86 @@
+body {
+  background: #235551;
+  color: #fff;
+  font-family: Arial;
+}
+
+a:link, a:visited, a:hover, a:active {
+  color: #fff;
+  text-decoration: none;
+}
+
+td {
+  padding-right: 30px;
+}
+
+input[type=text],input[type=password] {
+  width: 300px;
+  height: 25px;
+  padding: 1px 10px;
+}
+
+table#menuTable,td.menu,tr.menu {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+td.menu {
+  transition: 0.55s;
+}
+
+td.menu:hover {
+  background: #ffee00;
+  cursor: pointer;
+}
+
+#wall {
+  white-space: normal;
+  overflow-x: scroll;
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.clene {
+  position: relative;
+  display: inline-block;
+  width: 24%;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  border: 1px solid black;
+}
+
+.imgClene {
+  padding: 5px;
+  margin: auto;
+  width: 95%;
+}
+
+#top {
+  border-bottom: 1px solid black;
+  margin-bottom: 30px;
+}
+
+#menu {
+  text-align: center;
+  position: fixed;
+
+  top: 0;
+  right: 0;
+
+  display: inline;
+  font-size: 20px;
+}
+
+#banner {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+#important {
+  margin-bottom: 40px;
+}
