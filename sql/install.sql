@@ -1,0 +1,44 @@
+DROP DATABASE IF EXISTS `clene2`;
+CREATE DATABASE `clene2`;
+
+USE `clene2`;
+
+DROP TABLE IF EXISTS `cl_users`;
+CREATE TABLE `cl_users`
+(
+  `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_email`  VARCHAR(60) NOT NULL,
+  `user_name` VARCHAR(32) NOT NULL,
+  `user_password` VARCHAR(32) NOT NULL,
+  `user_level`  ENUM('user', 'admin') DEFAULT 'user',
+
+  `user_about` VARCHAR(512) DEFAULT 'No much to say...',
+
+  `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS `cl_posts`;
+CREATE TABLE `cl_posts`
+(
+  `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INTEGER NOT NULL,
+
+  `filename`  VARCHAR(60) NOT NULL,
+  `visible`   BOOLEAN DEFAULT true,
+
+  `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+DROP TABLE IF EXISTS `cl_coins`;
+CREATE TABLE `cl_coins`
+(
+  `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INTEGER NOT NULL,
+  `amount`  INTEGER DEFAULT 0,
+
+  `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)

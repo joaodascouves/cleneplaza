@@ -1,15 +1,13 @@
 <?php
 
   static $page_info = Array(
-    'title' => 'News',
-    'priority' => 2,
+    'title' => 'Logout',
+    'priority' => 50,
     'permission' => Array('user')
   );
 
   if( parse_context(__FILE__) )
     return $page_info;
 
-  echo make_page(Array(
-    'body.inner' => 'Notícias'
-
-  ));
+  $_SESSION = Array();
+  header("Location: {$config['siteroot']}/?op=home");

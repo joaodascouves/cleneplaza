@@ -2,6 +2,7 @@
 
   static $page_info = Array(
     'title' => 'Home',
+    'priority' => -1,
     'permission' => Array('guest', 'user', 'mod', 'alerted', 'admin')
   );
 
@@ -9,8 +10,11 @@
     return $page_info;
 
   echo make_page(Array(
-    'head.title' => $page_info['title'],
-    'body.banner' => "<h1>{$config['title']}</h1>{$config['subtitle']}",
-    'body.inner' => get_view('wall')
+    'body.inner' => (
+      $config['public_wall'] || $_SESSION['user_level'] === 'user' ?
+      get_view('wall') :
+      'Please log-in to access this page.'. "<br>Level: {$_SESSION['user_level']}"
+    ),
+    // 'config.important' => "Level: ". $_SESSION['user_level']
 
-  ), $with_menu=true);
+  ));

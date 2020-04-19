@@ -1,6 +1,6 @@
 <?php
 
-function inject_content($page, $replacements)
+function inject_content($page, $replacements = Array())
 {
   if( preg_match_all('/\{{2}\?*[ ]*(.*?)[ ]*\}{2}/s', $page, $matches) )
   {
@@ -21,7 +21,8 @@ function inject_content($page, $replacements)
           $value = "<!-- {$var} -->";
       }
 
-      $page = str_replace($matches[0][$index], $value, $page);
+      if ( isset($value) )
+        $page = str_replace($matches[0][$index], $value, $page);
     }
   }
 
@@ -30,9 +31,20 @@ function inject_content($page, $replacements)
 
 function parse_context($path)
 {
+  global $page_info;
+
+  if( !@in_array($_SESSION['user_level'], $page_info['permission']) )
+    exit;
+
   preg_match('/\/([^\/]+)(?=\.php)/', $path, $match);
   if( @strcmp($_GET['context'], $match[1]) )
     return $match[1];
+}
+
+function get_view($name, $parameters = Array())
+{
+  global $config;
+  return inject_content(@file_get_contents("{$config['siteroot']}/view/html/{$name}.html"), $parameters);
 }
 
 function make_menu()
@@ -41,45 +53,43 @@ function make_menu()
   global $page_info;
 
   $my_page_info = $page_info;
-  $menu = "<div id=\"menu\"><table id=\"menuTable\"><tr class=\"menu\">";
+  $menu = Array();
 
   foreach( glob("{$config['siteroot']}/view/*.php") as $page )
   {
     $has_permission = true;
 
     if( ($context = parse_context($page)) )
-    {
       $page_info = include_once($page);
-      $title = $page_info['title'];
 
-      if( !@in_array($_SESSION['user_level'], $page_info['permission']) )
-        $has_permission = false;
-    }
     else
     {
-      $title = $my_page_info['title'];
+      $page_info = $my_page_info;
       $context = $_GET['context'];
     }
 
-    if( $has_permission )
-      $menu .= "<td class=\"menu\" onclick=\"javascript:location.href = '{$config['siteroot']}/?context=${context}'\">{$title}</td>";
+    if( @in_array($_SESSION['user_level'], $page_info['permission']) && $page_info['priority'] >= 0 )
+    {
+      $priority = $page_info['priority'];
+      while( array_key_exists($priority, $menu) )
+        $priority++;
+
+      $menu[$priority] = Array(
+        'context' => $context,
+        'title' => $page_info['title'],
+        'permission' => $page_info['permission']
+      );
+    }
   }
 
-  $menu .= "</tr></table></div>";
-
+  ksort($menu);
   return $menu;
 }
 
-function get_view($name)
+function make_page($replacements, $with_menu=true, $with_banner=true)
 {
   global $config;
-  return @file_get_contents("{$config['siteroot']}/view/html/{$name}.html");
-}
-
-function make_page($replacements, $with_menu=false)
-{
-  global $config;
-  $page = get_view('default');
+  global $page_info;
 
   $options = Array(
     'config.theme' => $config['theme'],
@@ -88,9 +98,11 @@ function make_page($replacements, $with_menu=false)
     'config.important'=> $config['important'],
     'misc.random' => time(),
 
-    'body.topFixed' => ( $with_menu ? make_menu() : "" )
+    'head.title' => $page_info['title'],
+    'body.banner' => ( $with_banner ? get_view('banner') : '' ),
+    'body.topFixed' => ( $with_menu ? get_view('menu') : '' )
 
   );
 
-  return inject_content($page, $replacements + $options);
+  return get_view('default', $replacements + $options);
 }

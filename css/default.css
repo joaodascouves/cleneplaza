@@ -2,6 +2,7 @@ body {
   background: #235551;
   color: #fff;
   font-family: Arial;
+  overflow-y: scroll;
 }
 
 a:link, a:visited, a:hover, a:active {
@@ -19,11 +20,17 @@ input[type=text],input[type=password] {
   padding: 1px 10px;
 }
 
+#topFixed,table#menuTable {
+  background: #355051;
+  /* position: relative;
+  z-index: 999999; */
+}
+
 table#menuTable,td.menu,tr.menu {
   border: 1px solid black;
   border-collapse: collapse;
-  padding-left: 25px;
-  padding-right: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 td.menu {
@@ -37,7 +44,6 @@ td.menu:hover {
 
 #wall {
   white-space: normal;
-  overflow-x: scroll;
   position: relative;
   margin: 0 auto;
   width: 100%;
@@ -60,23 +66,25 @@ td.menu:hover {
 
 #top {
   border-bottom: 1px solid black;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 #menu {
   text-align: center;
-  position: fixed;
+  position: absolute;
 
   top: 0;
-  right: 0;
+  left: 0;
+  /* right: 0; */
 
   display: inline;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 #banner {
   width: 50%;
   margin: auto;
+  margin-top: 40px;
   margin-bottom: 40px;
   text-align: center;
 }
