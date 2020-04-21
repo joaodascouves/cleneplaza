@@ -86,21 +86,25 @@ function make_menu()
   return $menu;
 }
 
-function make_page($replacements, $with_menu=true, $with_banner=true)
+function make_page($replacements, $with_menu=true, $with_banner=true, $with_bottom=true)
 {
   global $config;
   global $page_info;
 
   $options = Array(
+    'misc.random' => time(),
+
     'config.theme' => $config['theme'],
     'config.title' => $config['title'],
     'config.subtitle' => $config['subtitle'],
-    'config.important'=> $config['important'],
-    'misc.random' => time(),
+    'config.important'=> ( !empty($config['important']) ? get_view('important', Array(
+      'config.important' => $config['important']
+      )) : '' ),
 
     'head.title' => $page_info['title'],
+    'body.menu' => ( $with_menu ? get_view('menu') : '' ),
     'body.banner' => ( $with_banner ? get_view('banner') : '' ),
-    'body.topFixed' => ( $with_menu ? get_view('menu') : '' )
+    'body.bottom' => ( $with_bottom ? get_view('bottom') : '' )
 
   );
 

@@ -2,7 +2,7 @@
 
   static $page_info = Array(
     'title' => 'Home',
-    'priority' => -1,
+    'priority' => 0,
     'permission' => Array('guest', 'user', 'mod', 'alerted', 'admin')
   );
 

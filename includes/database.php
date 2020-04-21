@@ -12,5 +12,5 @@
     echo 'db reinstalled. please reload the page.';
     exit;
   }
-
+  
   include 'security.php';

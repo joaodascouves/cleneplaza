@@ -10,9 +10,11 @@
 
   //misc
   $config['siteroot'] = dirname('../');
+  $config['upload_path'] = 'userfiles/';
 
   //security
   $config['salt'] = 'NOLETO';
   $config['public_wall'] = false;
+  $config['allowed_exts'] = Array('jpg', 'jpeg', 'png', 'gif');
 
   include_once 'config_ex.php';

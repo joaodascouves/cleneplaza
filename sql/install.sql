@@ -23,9 +23,14 @@ CREATE TABLE `cl_posts`
 (
   `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
   `user_id` INTEGER NOT NULL,
+  `aproved_by_user_id`  INTEGER DEFAULT 0,
 
-  `filename`  VARCHAR(60) NOT NULL,
+  `uploadname`  VARCHAR(60) NOT NULL,
+  `filename`  VARCHAR(128) NOT NULL,
+  `sum` VARCHAR(32) NOT NULL,
+
   `visible`   BOOLEAN DEFAULT true,
+  `status`  ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -41,4 +46,18 @@ CREATE TABLE `cl_coins`
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)
+);
+
+DROP TABLE IF EXISTS `cl_news`;
+CREATE TABLE `cl_news`
+(
+  `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INTEGER NOT NULL,
+
+  `title` VARCHAR(60) NOT NULL,
+  `subtitle`  VARCHAR(60) NOT NULL,
+  `body`  TEXT NOT NULL,
+
+  `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

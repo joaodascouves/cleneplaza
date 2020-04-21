@@ -1,25 +1,29 @@
-<table>
-  <tr>
-    <td>
+<table class="display-table">
+  <tr class="tr-d">
+    <td class="td-d">
       Name
     </td>
-    <td>
-      {{ profile.form.name }}
+    <td class="td-d">
+      <small>
+        {{ profile.form.name }}
+      </small>
     </td>
   </tr>
-  <tr>
-    <td>
+  <tr class="tr-d">
+    <td class="td-d">
       Created at
     </td>
-    <td>
-      {{ profile.form.created_at }}
+    <td class="td-d">
+      <small>
+        {{ profile.form.created_at }}
+      </small>
     </td>
   </tr>
-  <tr>
-    <td>
+  <tr class="tr-d">
+    <td class="td-d">
       About
     </td>
-    <td>
+    <td class="td-d">
       <textarea>
         {{ profile.form.about }}
       </textarea>

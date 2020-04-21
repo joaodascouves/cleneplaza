@@ -1,53 +1,19 @@
-<div id="wall">
+<div id="center-modal">
+  <a class="modal-close" href="#" onclick="parentNode.style.display='none';">Close (×)</a>
 </div>
 
+<section>
+  <div id="wall-container">
+    <div class="wall-image-container" id="upload_box">
+      <label for="image_file">
+        <img class="wall-image-file" id="wall_image_preview" src="/clenexyz/foto.jpg" />
+      </label>
+      <form action="api.php?action=wall_image_insert" method="POST" enctype="multipart/form-data">
+        <input name="image_file" id="image_file" type="file" accept="image/*" onchange="wall_image_preview_refresh(event);" /><br/>
+        <input class="form-button wall-image-send" id="send_file" type="submit" value="Send" />
+      </form>
+    </div>
+  </div>
+</section>
 
-<div id="wall2">
-  <div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">sem nome</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">sem nome</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">sem nome</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">Amin</div>
-   <div class="nomeClene">Uploader: jampa</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">sem nome</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">teste</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">teste</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">sem nome</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-
-<div class="clene">
-   <img class="imgClene" src="/clenexyz/foto.jpg">
-   <div class="nomeClene">sem nome</div>
-   <div class="nomeClene">Uploader: Jurandir Silva</div>
-</div>
-
-</div>
+<script type="text/javascript" src="js/wall.js?{{ misc.random }}"></script>

@@ -1,13 +1,13 @@
-<div id="menu">
-  <table id="menuTable">
-    <tr class="menu">
+<div id="menu-div">
+  <table id="menu-table">
+    <tr class="menu-tr">
       {{?
         global $config;
 
         $menu = make_menu();
         foreach( $menu as $my_page )
         {
-          echo "<td class=\"menu\" onclick=\"javascript:location.href='{$config['siteroot']}/?context={$my_page['context']}'\">
+          echo "<td class=\"menu-td\" onclick=\"javascript:location.href='{$config['siteroot']}/?context={$my_page['context']}'\">
             ${my_page['title']}
           </td>";
 

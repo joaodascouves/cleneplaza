@@ -2,24 +2,31 @@
 <html>
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
   <link rel="stylesheet" type="text/css" href="css/{{ config.theme }}.css?{{ misc.random }}" />
+  {{?
+    global $config;
+
+    foreach( $config['user_scripts'] as $script )
+      echo "<script type=\"text/javascript\" src=\"{$script}?". time() ."\"></script>";
+  }}
   <script type="text/javascript" src="js/main.js?{{ misc.random }}"></script>
   <title>{{ config.title }} - {{ head.title }}</title>
 </head>
 
 <body>
-  <div id="top">
+  <div id="page-container">
+    <div id="top-container">
+      {{ body.menu }}
       {{ body.banner }}
       {{ config.important }}
-    <div id="topFixed">
-      {{ body.topFixed }}
     </div>
-  </div>
-  <div id="inner">
-    {{ body.inner }}
-  </div>
-  <div id="bottom">
-    {{ body.bottom }}
+    <div id="inner-container">
+      {{ body.inner }}
+    </div>
+    <div id="bottom-container">
+      {{ body.bottom }}
+    </div>
   </div>
 </body>
 </html>
