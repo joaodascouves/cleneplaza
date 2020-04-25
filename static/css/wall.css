@@ -1,0 +1,110 @@
+#image_file {
+  display: none;
+}
+
+#next_button {
+  position: absolute;
+  right: 3%
+}
+
+#wall-pagination-container {
+  width: 50%;
+  margin-top: 3%;
+  float: left;
+
+  font-size: 25px;
+}
+
+#wall-options-container {
+  display: inline;
+  font-size: 13px;
+}
+
+.wall-image-container {
+  position: relative;
+  float: left;
+  width: 23vw;
+  height: 300px;
+  margin: 0 1.03vw 1% 0;
+  border: 1px solid black;
+  background: var(--secondary-bg-color);
+}
+
+.wall-image-file {
+  width: 21.8vw;
+  height: 80%;
+  padding: 25px 0.5vw 1px 0.5vw;
+  /* margin: auto; */
+}
+
+.wall-image-send {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.wall-image-send:disabled {
+  background: var(--primary-bg-color);
+}
+
+.wall-image-label {
+  font-size: 13.5px;
+  padding-top: 1.5%;
+  padding-left: 0.5vw;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.wall-image-label-top-right {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  font-size: 11px;
+}
+
+.wall-image-label-top-left {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 20px;
+  max-width: 65%;
+}
+
+@media (max-width: 480px) {
+  #wall-options-container {
+    display: inline;
+    font-size: 8px;
+  }
+
+  .wall-image-container {
+    width: 98%;
+    height: 400px;
+    margin-top: 2%;
+  }
+
+  .wall-image-file{
+    width: 96%;
+    height: 84%;
+    padding: 28px 7px 1px 7px;
+    /* margin-bottom: -3px; */
+  }
+
+  .wall-image-send {
+    width: 20vw;
+  }
+
+  .wall-image-label
+  {
+    padding-left: 10px;
+    font-size: 16px;
+  }
+
+  .wall-image-label-top-right {
+    font-size: 12px;
+  }
+
+  .wall-image-label-creator {
+    /**/
+  }
+}

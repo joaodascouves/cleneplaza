@@ -9,5 +9,5 @@
   if( parse_context(__FILE__) )
     return $page_info;
 
-  $_SESSION = Array();
+  session_destroy();
   header("Location: {$config['siteroot']}/?op=home");

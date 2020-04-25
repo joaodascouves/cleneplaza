@@ -1,0 +1,14 @@
+<div id="post-container">
+  {{ filename }}<br/>
+  <small>
+    Uploaded by <a href="?context=profile&profileId={{ user_id }}">{{ creator }}</a> at {{ created_at }}
+  </small>
+
+  <div class="post-image-container">
+    <img style="width: 300px" src="{{ uploadname }}">
+  </div>
+
+  <p class="post-text">
+    {{ message }}
+  </p>
+</div>

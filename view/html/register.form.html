@@ -5,7 +5,7 @@
       Username
     </td>
     <td class="td-d">
-      <input class="form" type="text" name="username" placeholder="Username" />
+      <input class="form" type="text" name="username" autocapitalize="off" placeholder="Username" />
     </td>
   </tr>
   <tr class="tr-d">
@@ -13,7 +13,7 @@
       E-mail
     </td>
     <td class="td-d">
-    <input class="form" type="text" name="email" placeholder="E-mail address" />
+    <input class="form" type="text" name="email" autocapitalize="off" placeholder="E-mail address" />
     </td>
   </tr>
   <tr class="tr-d">
@@ -42,4 +42,4 @@
 </form>
 </table>
 <br/>
-{{ register.form.error }}
+{{ error }}

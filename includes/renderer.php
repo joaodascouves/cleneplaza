@@ -1,5 +1,15 @@
 <?php
 
+include 'controls/core.php';
+
+/*
+  Processes HTML replacing double brackets with array data, or
+  evaluement, then return it.
+
+  @parameter String $page
+  @paramter Array $replacements
+  @return String
+*/
 function inject_content($page, $replacements = Array())
 {
   if( preg_match_all('/\{{2}\?*[ ]*(.*?)[ ]*\}{2}/s', $page, $matches) )
@@ -26,27 +36,52 @@ function inject_content($page, $replacements = Array())
     }
   }
 
-  return $page;
+  return trim($page);
 }
 
+/*
+  Parses current page context based in URI, and exits if current user permissions
+  doesn't attend to it. If page was invoked internally (e.g. include), return it
+  alias name. Otherwise, returns false.
+
+  @parameter String $path
+  @return Boolean
+*/
 function parse_context($path)
 {
   global $page_info;
 
-  if( !@in_array($_SESSION['user_level'], $page_info['permission']) )
+  if( !@in_array(current_user_privilege(), $page_info['permission']) )
     exit;
 
   preg_match('/\/([^\/]+)(?=\.php)/', $path, $match);
   if( @strcmp($_GET['context'], $match[1]) )
     return $match[1];
+
+  return false;
 }
 
+/*
+  Parses and returns a HTML file located in root/view/html/,
+  applying evaluation by default.
+
+  @parameter String $name
+  @parameter Array $parameters
+  @return String
+*/
 function get_view($name, $parameters = Array())
 {
   global $config;
   return inject_content(@file_get_contents("{$config['siteroot']}/view/html/{$name}.html"), $parameters);
 }
 
+/*
+  Builds an Array object containing title, context and priority
+  of pages which current user has access to. If any of this pages throw error,
+  the page will fail to execute.
+
+  @return Array
+*/
 function make_menu()
 {
   global $config;
@@ -68,7 +103,7 @@ function make_menu()
       $context = $_GET['context'];
     }
 
-    if( @in_array($_SESSION['user_level'], $page_info['permission']) && $page_info['priority'] >= 0 )
+    if( @in_array(current_user_privilege(), $page_info['permission']) && $page_info['priority'] >= 0 )
     {
       $priority = $page_info['priority'];
       while( array_key_exists($priority, $menu) )
@@ -86,6 +121,15 @@ function make_menu()
   return $menu;
 }
 
+/*
+  This function is an alias for make_page('default' ...).
+  Returns the parsed view with some additional options.
+
+  @parameter Array $replacements
+  @parameter Boolean $with_menu
+  @parameter Boolean $with_banner
+  @parameter Boolean $with_bottom
+*/
 function make_page($replacements, $with_menu=true, $with_banner=true, $with_bottom=true)
 {
   global $config;

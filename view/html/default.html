@@ -3,18 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
-  <link rel="stylesheet" type="text/css" href="css/{{ config.theme }}.css?{{ misc.random }}" />
-  {{?
-    global $config;
+  <link rel="stylesheet" type="text/css" href="static/css/{{ config.theme }}.css?{{ misc.random }}" />
+  <link rel="stylesheet" type="text/css" href="static/css/wall.css?{{ misc.random }}" />
+  <link rel="stylesheet" type="text/css" href="static/css/post.css?{{ misc.random }}" />
+  {{? //<?
+    if( !no_script() )
+    {
+      global $config;
 
-    foreach( $config['user_scripts'] as $script )
-      echo "<script type=\"text/javascript\" src=\"{$script}?". time() ."\"></script>";
+      echo "<script type=\"text/javascript\" src=\"static/js/main.js?". time() ."\"></script>";
+      foreach( $config['user_scripts'] as $script )
+        echo "<script type=\"text/javascript\" src=\"{$script}?". time() ."\"></script>";
+    }
   }}
-  <script type="text/javascript" src="js/main.js?{{ misc.random }}"></script>
   <title>{{ config.title }} - {{ head.title }}</title>
 </head>
 
 <body>
+    {{? //<?
+      echo ( no_script() ?
+      "<script type=\"text/javascript\">window.location.href += '&noscript=false';</script>" :
+      "<noscript><meta http-equiv=\"refresh\" content=\"0;{$_SERVER['REQUEST_URI']}&noscript=true\" /></noscript>" );
+    }}
   <div id="page-container">
     <div id="top-container">
       {{ body.menu }}

@@ -11,10 +11,15 @@
 
   echo make_page(Array(
     'body.inner' => (
-      $config['public_wall'] || $_SESSION['user_level'] === 'user' ?
-      get_view('wall') :
-      'Please log-in to access this page.'. "<br>Level: {$_SESSION['user_level']}"
-    ),
-    // 'config.important' => "Level: ". $_SESSION['user_level']
+      $config['public_wall'] || current_user_privilege() === 'user' ?
+
+      get_view('wall', Array(
+        'offset' => ( @is_numeric($_GET['offset']) ? $_GET['offset'] : 0 ),
+
+      )) :
+
+
+      'Please log-in to access this page.'. "<br>Level: ". current_user_privilege()
+    )
 
   ));

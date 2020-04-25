@@ -1,14 +1,14 @@
-<div id="menu-div">
+<div id="menu-container">
   <table id="menu-table">
     <tr class="menu-tr">
-      {{?
+      {{? //<?
         global $config;
 
         $menu = make_menu();
         foreach( $menu as $my_page )
         {
-          echo "<td class=\"menu-td\" onclick=\"javascript:location.href='{$config['siteroot']}/?context={$my_page['context']}'\">
-            ${my_page['title']}
+          echo "<td class=\"menu-td\">
+            <a href=\"{$config['siteroot']}/?context={$my_page['context']}\">${my_page['title']}</a>
           </td>";
 
         }

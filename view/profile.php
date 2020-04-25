@@ -9,11 +9,12 @@
   if( parse_context(__FILE__) )
     return $page_info;
 
+  include 'includes/controls/user_control.php';
+
+  $user = ( isset($_GET['profileId']) ? user_get_by_id(validate_natural_num($_GET['profileId'])) : current_user_get() );
+
   echo make_page(Array(
-    'body.inner' => get_view('profile.form', Array(
-      'profile.form.name' => $_SESSION['user_name'],
-      'profile.form.created_at' => $_SESSION['created_at'],
-      'profile.form.about' => $_SESSION['user_about']
-      ))
+    'body.inner' => get_view('profile.form', $user
+      + Array('posts_count' => user_posts_count_by_id($user['ID'])))
 
   ));

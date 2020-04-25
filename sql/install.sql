@@ -7,12 +7,12 @@ DROP TABLE IF EXISTS `cl_users`;
 CREATE TABLE `cl_users`
 (
   `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
-  `user_email`  VARCHAR(60) NOT NULL,
-  `user_name` VARCHAR(32) NOT NULL,
-  `user_password` VARCHAR(32) NOT NULL,
-  `user_level`  ENUM('user', 'admin') DEFAULT 'user',
+  `email`  VARCHAR(60) NOT NULL,
+  `name` VARCHAR(32) NOT NULL,
+  `password` VARCHAR(32) NOT NULL,
+  `level`  ENUM('user', 'admin') DEFAULT 'user',
 
-  `user_about` VARCHAR(512) DEFAULT 'No much to say...',
+  `about` VARCHAR(512) DEFAULT 'No much to say...',
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_at` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -29,8 +29,34 @@ CREATE TABLE `cl_posts`
   `filename`  VARCHAR(128) NOT NULL,
   `sum` VARCHAR(32) NOT NULL,
 
+  `body`  TEXT DEFAULT NULL,
+
   `visible`   BOOLEAN DEFAULT true,
   `status`  ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+
+  `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS `cl_mirrors`;
+CREATE TABLE `cl_mirrors`
+(
+  `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INTEGER NOT NULL,
+
+  `url` VARCHAR(128) NOT NULL,
+  `ip`  INT(4) UNSIGNED NOT NULL,
+  `content` TEXT NOT NULL,
+
+  `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS `cl_comments`;
+CREATE TABLE `cl_comments`
+(
+  `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `user_id` INTEGER NOT NULL,
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -60,4 +86,16 @@ CREATE TABLE `cl_news`
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO `cl_users` (
+  `name`,
+  `email`,
+  `password`,
+  `about`
+) VALUES (
+  'teste',
+  'teste',
+  MD5(CONCAT('teste', 'NOLETO')),
+  'Test user.'
 );

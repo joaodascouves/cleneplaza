@@ -4,9 +4,7 @@
       Name
     </td>
     <td class="td-d">
-      <small>
-        {{ profile.form.name }}
-      </small>
+      {{ name }}
     </td>
   </tr>
   <tr class="tr-d">
@@ -14,9 +12,7 @@
       Created at
     </td>
     <td class="td-d">
-      <small>
-        {{ profile.form.created_at }}
-      </small>
+      {{ created_at }}
     </td>
   </tr>
   <tr class="tr-d">
@@ -25,8 +21,16 @@
     </td>
     <td class="td-d">
       <textarea>
-        {{ profile.form.about }}
+        {{ about }}
       </textarea>
+    </td>
+  </tr>
+  <tr class="tr-d">
+    <td class="td-d">
+      Posts made
+    </td>
+    <td class="td-d">
+      {{ posts_count }}
     </td>
   </tr>
 </table>

@@ -1,0 +1,24 @@
+#post-container {
+  background: var(--secondary-bg-color);
+  width: 94.5%;
+  padding: 15px;
+  border: 1px solid black;
+}
+
+.post-image-container
+{
+  width: 50%;
+  padding-top: 30px;
+  padding-bottom: 20px;
+}
+
+p {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+@media (max-width: 480px) {
+  #post-container {
+    width: 89.5%;
+  }
+}

@@ -10,8 +10,11 @@
   if( file_exists("./view/{$context}.php") )
   {
     session_start();
-    if( !isset($_SESSION['user_level']))
-      $_SESSION['user_level'] = 'guest';
+    setcookie('noscript', ( no_script() ? 'true' : 'false' ), time()+3600, '/');
+
+
+    if( !isset($_SESSION['level']))
+      $_SESSION['level'] = 'guest';
 
     include "./view/{$context}.php";
   }
