@@ -13,9 +13,9 @@
     global $config;
 
     $query = mysqli_query($conn, sprintf("SELECT `p`.`ID` AS `ID`, `p`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
-      CONCAT('%s', `p`.`status`, '/', `p`.`file_path`) AS `file_path`, `p`.`file_realname` AS `file_realname`, `p`.`created_at`,
+      `p`.`file_path` AS `file_path`, `p`.`file_name` AS `file_name`, `p`.`created_at`,
       `p`.`body` AS `message` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` WHERE `p`.`ID`=%s",
-      $config['upload_path'], $id));
+      $id));
 
     if( mysqli_num_rows($query)>0 )
     {
@@ -42,11 +42,9 @@
     $direction = ( !@strcmp('ASC', $parameters['direction']) ? '>' : '<' );
 
     $query = mysqli_query($conn, sprintf("SELECT `p`.`ID` AS `ID`, `p`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
-      CONCAT('%s', `p`.`status`, '/', `p`.`file_path`) AS `file_path`, `p`.`file_realname` AS `file_realname`,
+      `p`.`file_path` AS `file_path`, `p`.`file_name` AS `file_name`,
       (LENGTH(TRIM(`p`.`body`)) - LENGTH(REPLACE(TRIM(`p`.`body`), ' ', ''))) + ROUND(LENGTH(TRIM(`p`.`body`))/LENGTH(TRIM(`p`.`body`)))
       AS `words_count` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` %s ORDER BY `p`.`ID` DESC LIMIT %d",
-
-      $config['upload_path'],
 
       ( $direction === '>' ?
         sprintf("WHERE `p`.`ID`%s%d AND `p`.`ID`>$offset",  ( $offset<49 ? '>' : '<'), ( $offset<49 ? $offset : $offset+49 ) ) :
@@ -56,7 +54,7 @@
       $limit
       ));
 
-    if( mysqli_num_rows($query) == 0 )
+    if( !$query || mysqli_num_rows($query) == 0 )
       return Array(
         'status' => 0,
         'message' => '',
@@ -91,46 +89,48 @@
     global $config;
     global $conn;
 
-    if( @empty($image_file = $parameters['image_file']) || !exif_imagetype($image_file['tmp_name']) ||
-        !@in_array($image_ext = end(explode('/', $image_file['type'])), $config['allowed_exts']) )
-    {
+    if( @empty($parameters['image_file']['name']) )
       return Array(
-        'status' => 1,
-        'message' => 'Invalid file.'
+        'status' => 6,
+        'message'=> 'Image filename can not be empty.'
+      );
+
+    $upload_result = parse_and_upload_image($parameters['image_file'], 'posts', 'pending');
+    if( !is_array($upload_result) )
+    {
+      switch( $upload_result )
+      {
+        case 1: $error = 'Invalid file.'; break;
+        case 2: $error = 'Image was posted recently.'; break;
+        case 3: $error = 'File coudn\'t be uploaded.'; break;
+        default: $error = 'Unknown error.'; break;
+      }
+
+      return Array(
+        'status' => $upload_result,
+        'message'=> $error
       );
     }
 
     $message = ( !@empty($parameters['message']) ? $parameters['message'] : '');
-    $file_sum = md5_file($image_file['tmp_name']);
 
-    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_posts` WHERE `file_realname`='%s' OR `file_sum`='%s'",
-      secure_str($image_file['name']), $file_sum));
+    $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_name`, `file_sum`, `body`)
+      VALUES ('%d', '%s', '%s', '%s', '%s')",
+      current_user_get()['ID'],
+      $upload_result[0],
+      $upload_result[1],
+      $upload_result[2],
+      $message)
+    );
 
-    if( mysqli_num_rows($query)>0 )
+    if( (!$query || !mysqli_affected_rows($conn)) )
       return Array(
-        'status' => 1,
-        'message' => 'Image was posted recently.'
+        'status' => 5,
+        'message'=> 'Couldn\'t insert row in database.'
       );
 
-    $upload_name = sprintf("%s-%s.%s", substr($file_sum, 0, 6), time(), $image_ext);
-
-    if( move_uploaded_file($image_file['tmp_name'], "{$config['upload_path']}pending/$upload_name") )
-    {
-      $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_realname`, `file_sum`, `body`)
-        VALUES ('%d', '%s', '%s', '%s', '%s')", current_user_get()['ID'], $upload_name, $image_file['name'], $file_sum, $message));
-
-      if( mysqli_affected_rows($conn)>0 )
-        return Array(
-          'status' => 0,
-          'message' => 'Image uploaded.'
-        );
-
-      else
-      {
-        return Array(
-          'status' => 1,
-          'message' => 'Upload error.'
-        );
-      }
-    }
+    return Array(
+      'status' => 0,
+      'message'=> 'Image posted with ID '. mysqli_insert_id($conn)
+    );
   }

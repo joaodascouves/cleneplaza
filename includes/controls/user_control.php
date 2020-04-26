@@ -50,26 +50,50 @@
 
     else
     {
-      if( isset($_FILES['propic']) )
-      {
-        //
-      }
-
-      $query = mysqli_query($conn, sprintf("UPDATE `cl_users` SET `name`='%s', `about`='%s' WHERE `ID`=%d",
-        $parameters['name'], $parameters['about'], $id));
-
       $user = user_get_by_id($id);
 
-      if( mysqli_affected_rows($conn)>0 )
-      {
-        if( $id == current_user_get()['ID'] )
-          $_SESSION['user'] = $user;
+      if( !@empty($_FILES['propic']['name']) )
+        $upload_result = parse_and_upload_image($_FILES['propic'], 'users');
 
-        $error = "User updated sucessfully.";
+      if( @empty($_FILES['propic']['name']) || @is_array($upload_result) )
+      {
+        $query = mysqli_query($conn, sprintf("UPDATE `cl_users` SET `name`='%s', `about`='%s'%s WHERE `ID`=%d",
+          $parameters['name'],
+          $parameters['about'],
+          ( @is_array($upload_result) ?
+            sprintf(", file_path='%s', file_name='%s', file_sum='%s'",
+              $upload_result[0],
+              $upload_result[1],
+              $upload_result[2]
+              ) : ''
+          ),
+          $id)
+        );
+
+        if( mysqli_affected_rows($conn)>0 )
+        {
+          $user = user_get_by_id($id);
+
+          if( $id == current_user_get()['ID'] )
+            $_SESSION['user'] = $user;
+
+          $error = "User updated sucessfully.";
+        }
+        else
+          $error = "User was not updated.";
       }
       else
-        $error = "User couldn't be updated.";
+      {
+        switch( $upload_result )
+        {
+          case 1: $error = 'Invalid file.'; break;
+          case 2: $error = 'Profile picture already taken.'; break;
+          case 3: $error = 'File coudn\'t be uploaded.'; break;
+          default: $error = 'Unknown error.'; break;
+        }
+      }
     }
 
-    return get_view('profile.form', ( isset($user) ? $user : Array() ) + Array('error' => $error));
+
+    return get_view('profile.form', $user + Array('error' => $error));
   }

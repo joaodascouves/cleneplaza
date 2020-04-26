@@ -10,7 +10,7 @@
             ( isset($_GET['profileId']) ? sprintf("&profileId=%d", $_GET['profileId']) : '' ));
         }
       }}<br/><br/>
-    <img class="profile-image" src="/clenexyz/imagem.php">
+    <img class="profile-image" src="{{ file_path }}" alt="{{ file_name }}">
     </li>
 
     <li>

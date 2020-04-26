@@ -17,6 +17,7 @@
   word-break: break-all;
   background: var(--secondary-bg-color);
   border: 1px solid black;
+  display: inline-block;
 }
 
 /* .display-table {

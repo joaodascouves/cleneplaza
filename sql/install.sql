@@ -13,13 +13,13 @@ CREATE TABLE `cl_users`
   `level`  ENUM('user', 'admin') DEFAULT 'user',
 
   `file_path`  VARCHAR(60) DEFAULT '/clenexyz/imagem.php',
-  `file_realname`  VARCHAR(128) DEFAULT NULL,
+  `file_name`  VARCHAR(128) DEFAULT NULL,
   `file_sum` VARCHAR(32) DEFAULT NULL,
 
   `about` VARCHAR(512) DEFAULT 'No much to say...',
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_at` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 DROP TABLE IF EXISTS `cl_posts`;
@@ -30,7 +30,7 @@ CREATE TABLE `cl_posts`
   `aproved_by_user_id`  INTEGER DEFAULT 0,
 
   `file_path`  VARCHAR(60) NOT NULL,
-  `file_realname`  VARCHAR(128) NOT NULL,
+  `file_name`  VARCHAR(128) NOT NULL,
   `file_sum` VARCHAR(32) NOT NULL,
 
   `body`  TEXT DEFAULT NULL,

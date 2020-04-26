@@ -39,7 +39,7 @@
   /*
     Parse $file applying proper filters. If the file passes it all,
     it is uploaded on the specific context folder, than given a upload name and a checkfile_sum.
-    Otherwise, an error is raised. $specifier is a variable used merely for convenience
+    Otherwise, an integer is returned. $specifier is a variable used merely for convenience
     with the post_image_insert function (includes/control/post_control.php).
 
     @parameter $file Array
@@ -52,33 +52,47 @@
     global $config;
     global $conn;
 
-    if( !exif_imagetype($file) || !@in_array($file_ext = end(explode('/', $file['type'])), $config['allowed_exts']) )
+    if( !exif_imagetype($file['tmp_name']) || !@in_array($file_ext = end(explode('/', $file['type'])), $config['allowed_exts']) )
       return 1; // Invalid file.
 
     $file_sum = md5_file($file['tmp_name']);
+    $tolerance = time() - $config['unique_expiry'];
 
-    $query = mysqli_query(sprintf("SELECT `ID` FROM `cl_%s` WHERE (file_realname='%s' OR file_sum='%s')
-      AND UNIX_TIMESTAMP(updated_at)>%d",
+    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_%s` WHERE (`file_name`='%s' OR `file_sum`='%s')
+      AND (UNIX_TIMESTAMP(`updated_at`)>%d OR UNIX_TIMESTAMP(`created_at`)>%d)",
 
-      $file['name'],
-      $file_sum,
       $context,
-      time() - $config['unique_expiry']
+      secure_str($file['name']),
+      $file_sum,
+      $tolerance,
+      $tolerance
     ));
+
+    if( !$query )
+    {
+      die(mysqli_error($conn));
+      return 4;
+    }
 
     if( mysqli_num_rows($query)>0 )
       return 2; // File recently posted in that context.
 
-    $file_path = sprintf("%s%s/%s",
+    $file_path = sprintf("%s%s/%s%s.%s",
       $config['upload_path'],
       $context,
       ( !@empty($specifier) ? "{$specifier}/" : '' ),
-      time(),
+      time() - $config['unique_expiry'],
       $file_ext
     );
 
     if( move_uploaded_file($file['tmp_name'], $file_path) )
     {
-      //
+      return Array(
+        $file_path,
+        $file['name'],
+        $file_sum
+      );
     }
+    else
+      return 3; // File couldn't be uploaded.
   }
