@@ -68,7 +68,7 @@ EOF;
       foreach( $wall_collection as $post )
       {
         echo "<div class=\"wall-image-container\">
-          <img class=\"wall-image-file\" src=\"{$post['uploadname']}\">
+          <img class=\"wall-image-file\" src=\"{$post['file_path']}\">
           <div class=\"wall-image-label wall-image-label-top-left\">
             <a href=\"?context=post&postId={$post['ID']}&action=show\">#{$post['ID']}</a>
             <!-- <div class=\"wall-image-label wall-image-label-creator\"> -->
@@ -76,7 +76,7 @@ EOF;
             <!-- </div> -->
           </div>
           <div class=\"wall-image-label wall-image-label-top-right\">(W:{$post['words_count']}|R:0|I:0)</div>
-          <div class=\"wall-image-label wall-image-label-filename\">{$post['filename']}</div>
+          <div class=\"wall-image-label wall-image-label-file_realname\">{$post['file_realname']}</div>
         </div>";
       }
     }

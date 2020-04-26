@@ -13,7 +13,7 @@
     global $config;
 
     $query = mysqli_query($conn, sprintf("SELECT `p`.`ID` AS `ID`, `p`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
-      CONCAT('%s', `p`.`status`, '/', `p`.`uploadname`) AS `uploadname`, `p`.`filename` AS `filename`, `p`.`created_at`,
+      CONCAT('%s', `p`.`status`, '/', `p`.`file_path`) AS `file_path`, `p`.`file_realname` AS `file_realname`, `p`.`created_at`,
       `p`.`body` AS `message` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` WHERE `p`.`ID`=%s",
       $config['upload_path'], $id));
 
@@ -42,7 +42,7 @@
     $direction = ( !@strcmp('ASC', $parameters['direction']) ? '>' : '<' );
 
     $query = mysqli_query($conn, sprintf("SELECT `p`.`ID` AS `ID`, `p`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
-      CONCAT('%s', `p`.`status`, '/', `p`.`uploadname`) AS `uploadname`, `p`.`filename` AS `filename`,
+      CONCAT('%s', `p`.`status`, '/', `p`.`file_path`) AS `file_path`, `p`.`file_realname` AS `file_realname`,
       (LENGTH(TRIM(`p`.`body`)) - LENGTH(REPLACE(TRIM(`p`.`body`), ' ', ''))) + ROUND(LENGTH(TRIM(`p`.`body`))/LENGTH(TRIM(`p`.`body`)))
       AS `words_count` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` %s ORDER BY `p`.`ID` DESC LIMIT %d",
 
@@ -103,20 +103,20 @@
     $message = ( !@empty($parameters['message']) ? $parameters['message'] : '');
     $file_sum = md5_file($image_file['tmp_name']);
 
-    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_posts` WHERE `filename`='%s' OR `sum`='%s'",
+    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_posts` WHERE `file_realname`='%s' OR `file_sum`='%s'",
       secure_str($image_file['name']), $file_sum));
 
     if( mysqli_num_rows($query)>0 )
       return Array(
         'status' => 1,
-        'message' => 'Image was already posted.'
+        'message' => 'Image was posted recently.'
       );
 
     $upload_name = sprintf("%s-%s.%s", substr($file_sum, 0, 6), time(), $image_ext);
 
     if( move_uploaded_file($image_file['tmp_name'], "{$config['upload_path']}pending/$upload_name") )
     {
-      $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `uploadname`, `filename`, `sum`, `body`)
+      $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_realname`, `file_sum`, `body`)
         VALUES ('%d', '%s', '%s', '%s', '%s')", current_user_get()['ID'], $upload_name, $image_file['name'], $file_sum, $message));
 
       if( mysqli_affected_rows($conn)>0 )

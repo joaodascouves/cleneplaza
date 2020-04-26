@@ -12,6 +12,28 @@ include 'controls/core.php';
 */
 function inject_content($page, $replacements = Array())
 {
+  if( is_array($replacements) )
+  foreach( $replacements as $name => $object )
+  {
+    if( is_array($object) )
+    {
+      foreach( $object as $key => $value )
+      {
+        $delimiter = ( is_string($value) ? "'" : '' );
+
+        eval(sprintf("$%s['%s'] = %s%s%s;",
+          str_replace('.', '_', $name),
+          $key,
+          $delimiter,
+          $value,
+          $delimiter
+        ));
+      }
+
+      unset($replacements[$name]);
+    }
+  }
+
   if( preg_match_all('/\{{2}\?*[ ]*(.*?)[ ]*\}{2}/s', $page, $matches) )
   {
     foreach( $matches[1] as $index => $var )
@@ -25,10 +47,10 @@ function inject_content($page, $replacements = Array())
       }
       else
       {
-        if( !@empty($replacements[$var]) )
+        if( isset($replacements[$var]) )
           $value = $replacements[$var];
         else
-          $value = "<!-- {$var} -->";
+          $value = '';
       }
 
       if ( isset($value) )
@@ -112,7 +134,8 @@ function make_menu()
       $menu[$priority] = Array(
         'context' => $context,
         'title' => $page_info['title'],
-        'permission' => $page_info['permission']
+        'permission' => $page_info['permission'],
+        'styles' => ( isset($page_info['styles']) ? $page_info['styles'] : Array() )
       );
     }
   }
@@ -146,6 +169,7 @@ function make_page($replacements, $with_menu=true, $with_banner=true, $with_bott
       )) : '' ),
 
     'head.title' => $page_info['title'],
+    'head.styles' => ( !@empty($page_info['styles']) ? $page_info['styles'] : Array()),
     'body.menu' => ( $with_menu ? get_view('menu') : '' ),
     'body.banner' => ( $with_banner ? get_view('banner') : '' ),
     'body.bottom' => ( $with_bottom ? get_view('bottom') : '' )

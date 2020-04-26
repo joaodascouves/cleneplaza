@@ -12,6 +12,10 @@ CREATE TABLE `cl_users`
   `password` VARCHAR(32) NOT NULL,
   `level`  ENUM('user', 'admin') DEFAULT 'user',
 
+  `file_path`  VARCHAR(60) DEFAULT '/clenexyz/imagem.php',
+  `file_realname`  VARCHAR(128) DEFAULT NULL,
+  `file_sum` VARCHAR(32) DEFAULT NULL,
+
   `about` VARCHAR(512) DEFAULT 'No much to say...',
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -25,9 +29,9 @@ CREATE TABLE `cl_posts`
   `user_id` INTEGER NOT NULL,
   `aproved_by_user_id`  INTEGER DEFAULT 0,
 
-  `uploadname`  VARCHAR(60) NOT NULL,
-  `filename`  VARCHAR(128) NOT NULL,
-  `sum` VARCHAR(32) NOT NULL,
+  `file_path`  VARCHAR(60) NOT NULL,
+  `file_realname`  VARCHAR(128) NOT NULL,
+  `file_sum` VARCHAR(32) NOT NULL,
 
   `body`  TEXT DEFAULT NULL,
 

@@ -1,0 +1,14 @@
+Doppelganger event:
+
+An active user is randomly choose to be the 'doppelganger'. Then, a tag is displayed in his private
+profile section. During the period of a few days, a bot posts random threads as if it was posted by
+the user. The objective of the doppelganger user is to hide from the other users the fact that he was 'cloned'
+While this, a vote panel is displayed in the menu bar. If the other users succeed to vote the certain person
+for the 'doppelganger', each user that voted divides a percentage of the bounty. Otherwise, the 'doppelganger'
+user gains it all.
+
+
+Buying a temporary (1 hour) marquee with coins:
+
+All users can pay to display a temporary message globally. After paying and the message being approved, it
+goes to a queue of messages. Each message is displayed for a period of 1 hour in a certain interval of access peeks.

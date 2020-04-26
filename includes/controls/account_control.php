@@ -27,9 +27,9 @@
       return header('Location: /clene2/');
     }
     else {
-      return get_view('login.form', [
+      return get_view('login.form', Array(
         'error' => 'Incorrect e-mail or password.'
-      ]);
+      ));
     }
   }
 

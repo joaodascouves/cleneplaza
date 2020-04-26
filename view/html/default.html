@@ -4,9 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
   <link rel="stylesheet" type="text/css" href="static/css/{{ config.theme }}.css?{{ misc.random }}" />
-  <link rel="stylesheet" type="text/css" href="static/css/wall.css?{{ misc.random }}" />
-  <link rel="stylesheet" type="text/css" href="static/css/post.css?{{ misc.random }}" />
   {{? //<?
+
+    if( isset($head_styles) )
+    foreach( $head_styles as $style )
+      echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/css/$style.css?". time(). "\" />";
+
     if( !no_script() )
     {
       global $config;

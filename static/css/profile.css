@@ -1,0 +1,44 @@
+#profile-container img.profile-image {
+  width: 300px;
+}
+
+#profile-container ul {
+  padding-left: 20px;
+}
+
+#profile-container li {
+  padding-bottom: 25px;
+}
+
+#profile-container p.about {
+  max-width: 90%;
+  padding: 5px;
+  word-wrap: break-word;
+  word-break: break-all;
+  background: var(--secondary-bg-color);
+  border: 1px solid black;
+}
+
+/* .display-table {
+  width: 95%;
+}
+
+.display-table td {
+  padding-right: 10px;
+  padding-bottom: 10px;
+} */
+
+/* .display-table td.label { */
+  /* width: 20%; */
+  /* ont-size: 13px; */
+/*}*/
+
+/* .display-table td.about {
+  width: 90%;
+  height: 100px;
+  padding: 5px;
+  word-wrap: break-word;
+  word-break: break-all;
+  background: var(--secondary-bg-color);
+  border: 1px solid black;
+} */

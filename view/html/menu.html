@@ -1,18 +1,16 @@
 <div id="menu-container">
-  <table id="menu-table">
-    <tr class="menu-tr">
+  <ul>
       {{? //<?
         global $config;
 
         $menu = make_menu();
         foreach( $menu as $my_page )
         {
-          echo "<td class=\"menu-td\">
+          echo "<li>
             <a href=\"{$config['siteroot']}/?context={$my_page['context']}\">${my_page['title']}</a>
-          </td>";
+          </li>";
 
         }
       }}
-    <tr>
-  </table>
+  </ul>
 </div>

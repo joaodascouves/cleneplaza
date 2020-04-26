@@ -1,36 +1,38 @@
-<table class="display-table">
-  <tr class="tr-d">
-    <td class="td-d">
-      Name
-    </td>
-    <td class="td-d">
-      {{ name }}
-    </td>
-  </tr>
-  <tr class="tr-d">
-    <td class="td-d">
-      Created at
-    </td>
-    <td class="td-d">
-      {{ created_at }}
-    </td>
-  </tr>
-  <tr class="tr-d">
-    <td class="td-d">
-      About
-    </td>
-    <td class="td-d">
-      <textarea>
-        {{ about }}
-      </textarea>
-    </td>
-  </tr>
-  <tr class="tr-d">
-    <td class="td-d">
-      Posts made
-    </td>
-    <td class="td-d">
-      {{ posts_count }}
-    </td>
-  </tr>
+<table>
+  <form method="POST" enctype="multipart/form-data" autocomplete="off" id="profile_form">
+    <input type="hidden" name="ID" value="{{ ID }}" />
+    <tr class="tr-d">
+      <td class="td-d">
+        Name
+      </td>
+      <td class="td-d">
+        <input class="form" type="text" name="name" value="{{ name }}" />
+      </td>
+    </tr>
+    <tr class="tr-d">
+      <td class="td-d">
+        About
+      </td>
+      <td class="td-d">
+        <textarea name="about" cols="55" rows="10" form="profile_form">{{ about }}</textarea>
+      </td>
+    </tr>
+    <tr class="tr-d">
+      <td class="td-d">
+        Name
+      </td>
+      <td class="td-d">
+        <input class="form" type="file" name="propic" accept="image/*" />
+      </td>
+    </tr>
+    <tr class="tr-d">
+      <td class="td-d">
+      </td>
+      <td class="td-d">
+        <input class="form-button" type="submit" value="Submit" />
+      </td>
+    </tr>
+  </form>
 </table>
+<br/>
+{{ error }}

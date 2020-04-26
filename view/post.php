@@ -3,7 +3,8 @@
   static $page_info = Array(
     'title' => 'Post',
     'priority' => -1,
-    'permission' => Array('user')
+    'permission' => Array('user'),
+    'styles' => Array('post')
   );
 
   if( parse_context(__FILE__) )

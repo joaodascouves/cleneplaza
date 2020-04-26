@@ -58,7 +58,7 @@ function wall_image_insert(image)
 
   var image_display = document.createElement('img');
   image_display.className = 'wall-image-file';
-  image_display.src = image.uploadname;
+  image_display.src = image.file_path;
 
   var post_link = document.createElement('a');
   post_link.href = "?context=post&postId=" + image.ID + '&action=show';
@@ -77,13 +77,13 @@ function wall_image_insert(image)
   post_stats.classList.add('wall-image-label', 'wall-image-label-top-right');
   post_stats.innerHTML = '(W:' + image.words_count + '|R:0|I:0)';
 
-  var image_filename = document.createElement('div');
-  image_filename.classList.add('wall-image-label', 'wall-image-label-filename');
-  image_filename.innerHTML = image.filename;
+  var image_file_realname = document.createElement('div');
+  image_file_realname.classList.add('wall-image-label', 'wall-image-label-file_realname');
+  image_file_realname.innerHTML = image.file_realname;
 
   image_container.appendChild(image_id);
   image_container.appendChild(image_display);
-  image_container.appendChild(image_filename);
+  image_container.appendChild(image_file_realname);
   image_container.appendChild(post_stats);
 
   return image_container;

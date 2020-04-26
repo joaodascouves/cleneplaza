@@ -1,0 +1,31 @@
+<div id="profile-container">
+  <ul>
+    <li>
+      <h2 style="display: inline">{{ name }}</h2>
+      {{?
+        if( !isset($_GET['profileId']) ||
+          @validate_natural_num($_GET['profileId']) == current_user_get()['ID'] )
+        {
+          echo sprintf("<a href=\"?context=profile%s&action=edit\">(edit)</a>",
+            ( isset($_GET['profileId']) ? sprintf("&profileId=%d", $_GET['profileId']) : '' ));
+        }
+      }}<br/><br/>
+    <img class="profile-image" src="/clenexyz/imagem.php">
+    </li>
+
+    <li>
+      About me<br/>
+      <p class="about">
+        {{ about }}
+      </p>
+    </li>
+
+    <li>
+      Stats<br/>
+      <p class="about">
+        Posts made: {{ posts_count }}<br/>
+        Submited mirrors: 0
+      </p>
+    </li>
+  </ul>
+</div>

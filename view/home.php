@@ -3,7 +3,8 @@
   static $page_info = Array(
     'title' => 'Home',
     'priority' => 0,
-    'permission' => Array('guest', 'user', 'mod', 'alerted', 'admin')
+    'permission' => Array('guest', 'user', 'mod', 'alerted', 'admin'),
+    'styles' => Array('wall')
   );
 
   if( parse_context(__FILE__) )
@@ -13,7 +14,7 @@
     'body.inner' => (
       $config['public_wall'] || current_user_privilege() === 'user' ?
 
-      get_view('wall', Array(
+      get_view('post.wall', Array(
         'offset' => ( @is_numeric($_GET['offset']) ? $_GET['offset'] : 0 ),
 
       )) :

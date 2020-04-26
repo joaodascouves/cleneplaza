@@ -1,0 +1,15 @@
+.mirror-list-container {
+  font-size: 13px;
+}
+
+.mirror-list-container td {
+  padding-right: 40px;
+}
+
+.mirror-list-container tr.header {
+  font-weight: bold;
+}
+
+.mirror-list-container tr:hover {
+  background: #235661;
+}
