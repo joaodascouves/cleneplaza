@@ -79,14 +79,14 @@
 
   .wall-image-container {
     width: 98%;
-    height: 400px;
+    height: 335px;
     margin-top: 2%;
   }
 
   .wall-image-file{
     width: 96%;
-    height: 84%;
-    padding: 28px 7px 1px 7px;
+    height: 80%;
+    padding: 30px 7px 1px 7px;
     /* margin-bottom: -3px; */
   }
 

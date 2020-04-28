@@ -16,5 +16,17 @@
   foreach( Array(&$_GET, &$_POST, &$_SERVER) as &$input )
   {
     foreach( $input as $key => $value )
-      $input[$key] = secure_str($value);
+    {
+      if( @is_array($input[$key]) )
+        $input[$key] = null;
+
+      else
+        $input[$key] = secure_str($value);
+    }
+  }
+
+  if( sizeof($_FILES)>0 )
+  {
+    foreach( $_FILES as &$file )
+      $file['name'] = secure_str($file['name']);
   }

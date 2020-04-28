@@ -1,45 +1,117 @@
-<div class="mirror-list-container">
-<table>
-  <tr class="header">
-    <td>
-      #
-    </td>
-    <td>
-      Time
-    </td>
-    <td>
-      Notifier
-    </td>
-    <td>
-      Team
-    </td>
-    <td>
-      URL
-    </td>
-    <td>
-      ID
-    </td>
-  </tr>
-  <tr>
-    <td>
-      3033
-    </td>
-    <td>
-      {{? echo time(); }}
-    </td>
-    <td>
-      coolmemes1993
-    </td>
-    <td>
-      ProtoWave
-    </td>
-    <td>
-      http://teste.com/
-    </td>
-    <td>
-      ID
-    </td>
-  </tr>
-  <tr>
-</table>
+<div id="center-modal">
+  <a class="modal-close" href="#" onclick="parentNode.style.display='none'">Close (×)</a>
+</div>
+
+<div id="wall-options-container">
+  <table style="display: inline; position: relative">
+    <tr class="tr-d">
+{{? //<?
+  if( !no_script() )
+  {
+    $wall_opts = <<<EOF
+      <td class="td-d">
+        <input type="checkbox" id="sync_trigger" />
+        <label for="sync_trigger">
+          Synchronization
+        </label>
+      </td>
+      <td class="td-d">
+        <input type="checkbox" id="post_trigger" disabled />
+        <label for="post_trigger">
+          Post
+        </label>
+      </td>
+EOF;
+
+    echo $wall_opts;
+  }
+}}
+      <td class="td-d">
+        <a href="?context=mirror&action=submit">Make single</a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<section>
+  <div id="wall-container">
+    <div class="wall-image-container" id="upload_box" style="display: none">
+      <div class="wall-image-label wall-image-label-top-left">
+        Quick post image
+      </div>
+      <label for="image_file">
+        <img class="wall-image-file" id="wall_image_preview" src="/clenexyz/foto.jpg" />
+      </label>
+      <form action="api.php?context=post&action=image_insert" method="POST" enctype="multipart/form-data">
+        <input name="image_file" id="image_file" type="file" accept="image/*" onchange="wall_image_preview_refresh(event)" /><br/>
+        <input class="form-button wall-image-send" id="send_file" type="submit" value="Send" disabled />
+      </form>
+    </div>
+  </div>
+  {{? //<?
+    if( no_script() )
+    {
+      include 'controls/post_control.php';
+
+      $offset = 0;
+      $direction = ( !@strcmp('DESC', $_GET['direction']) ? 'DESC' : 'ASC' );
+
+      if( isset($_GET['offset']) )
+        $offset = @validate_natural_num($_GET['offset']);
+
+      $wall_collection = mirror_collection_fetch(Array(
+        'offset' => $offset,
+        'direction' => $direction,
+        'limit' => 48
+      ))['wall'];
+
+      if( $wall_collection )
+      foreach( $wall_collection as $post )
+      {
+        if( @is_array($post['flags']) )
+          $post['flags'] = implode(',', $post['flags']);
+
+        echo "<div class=\"wall-image-container\">
+          <img class=\"wall-image-file\" src=\"{$post['file_path']}\">
+          <div class=\"wall-image-label wall-image-label-top-left\">
+            <a href=\"?context=mirror&mirrorId={$post['ID']}&action=show\">#{$post['ID']}</a>
+            <!-- <div class=\"wall-image-label wall-image-label-creator\"> -->
+            <a href=\"?context=profile&profileId={$post['user_id']}\">~{$post['creator']}</a>
+            <!-- </div> -->
+          </div>
+          <div class=\"wall-image-label wall-image-label-top-right\">{$post['stats']}</div>
+          <div class=\"wall-image-label wall-image-label-file_name\">{$post['label']}</div>
+        </div>";
+      }
+    }
+  }}
+</section>
+
+<div id="wall-pagination-container">
+  {{? //<?
+    if( no_script() )
+    {
+      $current_page = ( isset($_GET['page']) ? @validate_natural_num($_GET['page']) : 0 );
+
+      if( sizeof($wall_collection) == 48 )
+      {
+        echo sprintf("<a id=\"next_button\" href=\"?context=home&offset=%d&direction=DESC&page=%d\">Next</a>",
+          $wall_collection[47]['ID'],
+          $current_page + 1
+          );
+      }
+
+      if( $current_page > 0 && $wall_collection )
+      {
+        echo sprintf("<a id=\"prev_button\" href=\"?context=home%s\">Previous</a>",
+          ( $current_page > 1 ?
+            sprintf("&offset=%d&direction=ASC&page=%d",
+              $wall_collection[0]['ID'],
+              $current_page - 1
+              ) : ''
+          )
+          );
+      }
+    }
+  }}
 </div>

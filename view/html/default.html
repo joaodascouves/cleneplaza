@@ -28,6 +28,13 @@
       "<script type=\"text/javascript\">window.location.href += '&noscript=false';</script>" :
       "<noscript><meta http-equiv=\"refresh\" content=\"0;{$_SERVER['REQUEST_URI']}&noscript=true\" /></noscript>" );
     }}
+    {{?
+      if( !no_script() )
+      {
+        $context = ( !@strcmp('home', $_GET['context']) ? 'post' : $_GET['context'] );
+        echo "<script>context='{$context}';</script>";
+      }
+    }}
   <div id="page-container">
     <div id="top-container">
       {{ body.menu }}

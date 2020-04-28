@@ -5,8 +5,10 @@
   static $__api_actions = Array();
 
   $__api_actions = Array(
-    'post_collection_get' =>  Array( Array('user', 'mod'),      Array('POST') ),
-    'post_image_insert' =>    Array( Array('user', 'mod'),      Array('POST') )
+    'post_collection_fetch' =>  Array( Array('user', 'mod'),  Array('POST') ),
+    'post_image_insert' =>  Array( Array('user', 'mod'),  Array('POST') ),
+
+    'mirror_collection_fetch' => Array( Array('user', 'mod'), Array('POST') )
 
   );
 

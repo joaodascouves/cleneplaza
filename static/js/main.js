@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function(){
-  if( window.location.href.match(/\?context=home/) )
+  if( window.location.href.match(/\?context=(home|mirror)($|&offset=)/) )
   {
     var d = new Date();
 

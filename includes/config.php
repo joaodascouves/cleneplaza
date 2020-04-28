@@ -1,19 +1,24 @@
 <?php
 
-  //$config = new Array();
-
   // database connection
   $config['hostname'] = 'localhost';
   $config['username'] = 'clene';
   $config['password'] = 'nolepass';
   $config['database'] = 'clene2';
 
-  //misc
+  // misc
   $config['siteroot'] = dirname('../');
   $config['upload_path'] = 'userfiles/';
-  $config['unique_expiry'] = 60*60*24; // time in seconds that unique locker spends to expire
 
-  //security
+  // post settings
+  $config['mirror_unique_expiry'] = 60*60*24*365; // 1 year.
+  $config['image_unique_expiry'] = 60*60*24;  // 1 day.
+
+  // mirroring settings
+  $config['http_timeout'] = 30;
+  $config['mirror_validity_code'] = 'title';
+
+  // security
   $config['salt'] = 'NOLETO';
   $config['public_wall'] = false;
   $config['allowed_exts'] = Array('jpg', 'jpeg', 'png', 'gif');

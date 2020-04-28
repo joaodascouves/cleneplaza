@@ -7,8 +7,14 @@ function rpc_bind(item, formdata)
     formdata.append(item.name, item.files[0]);
 }
 
+var rpc_oncourse = false;
 function rpc_send(action, data, callback)
 {
+  if( rpc_oncourse === true )
+    return;
+
+  rpc_oncourse = true;
+
   var request = new XMLHttpRequest();
   request.open('POST', action, true);
   request.send(data);
@@ -17,6 +23,8 @@ function rpc_send(action, data, callback)
   {
     if( request.status == 200 )
       callback(request.responseText);
+
+    rpc_oncourse = false;
   }
 
   return false;
@@ -47,11 +55,11 @@ function rpc_callback(data)
   if( document.getElementById('send_file') )
     document.getElementById('send_file').disabled = true;
 
-  if( document.getElementById('wall_image_preview') )
-    document.getElementById('wall_image_preview').src = '/clenexyz/foto.jpg';
+  if( document.getElementById('wall_grid_preview') )
+    document.getElementById('wall_grid_preview').src = '/clenexyz/foto.jpg';
 }
 
-function wall_image_insert(image)
+function wall_grid_insert(image)
 {
   var image_container = document.createElement('div');
   image_container.className = 'wall-image-container';
@@ -61,7 +69,7 @@ function wall_image_insert(image)
   image_display.src = image.file_path;
 
   var post_link = document.createElement('a');
-  post_link.href = "?context=post&postId=" + image.ID + '&action=show';
+  post_link.href = '?context=' + context + '&'+ context +'Id=' + image.ID + '&action=show';
   post_link.innerHTML = "#" + image.ID;
 
   var profile_link = document.createElement('a');
@@ -75,11 +83,11 @@ function wall_image_insert(image)
 
   var post_stats = document.createElement('div');
   post_stats.classList.add('wall-image-label', 'wall-image-label-top-right');
-  post_stats.innerHTML = '(W:' + image.words_count + '|R:0|I:0)';
+  post_stats.innerHTML = image.stats;
 
   var image_file_name = document.createElement('div');
   image_file_name.classList.add('wall-image-label', 'wall-image-label-file_name');
-  image_file_name.innerHTML = image.file_name;
+  image_file_name.innerHTML = image.label;
 
   image_container.appendChild(image_id);
   image_container.appendChild(image_display);
@@ -89,19 +97,19 @@ function wall_image_insert(image)
   return image_container;
 }
 
-function wall_image_get_count()
+function wall_grid_get_count()
 {
   return ( current_images ?
     current_images.length : 0 );
 }
 
-function wall_image_get_last_id()
+function wall_grid_get_last_id()
 {
   return ( current_images && current_images.length < 2 ?
     0 : parseInt(current_images[1].innerHTML.split('#')[1]) );
 }
 
-function wall_image_get_first_id()
+function wall_grid_get_first_id()
 {
   var last_hidden = ( current_images[current_images.length - 1].style.display == 'none' ? 2 : 1 );
 
@@ -112,10 +120,10 @@ function wall_image_get_first_id()
 var current_images =
 document.getElementsByClassName('wall-image-container');
 
-function wall_image_pagination_update()
+function wall_grid_pagination_update()
 {
-  var first_id = wall_image_get_first_id();
-  var last_id = wall_image_get_last_id();
+  var first_id = wall_grid_get_first_id();
+  var last_id = wall_grid_get_last_id();
 
   var pagination = document.getElementById('wall-pagination-container');
   var page_match = window.location.href.match(/&page=([0-9]+)/);
@@ -123,7 +131,7 @@ function wall_image_pagination_update()
   var page_num = ( page_match ? parseInt(page_match[1]) : 0 );
 
   var prev_button, next_button;
-  if( wall_image_get_count() > 48 )
+  if( wall_grid_get_count() > 48 )
   {
     next_button = document.getElementById('next_button');
     if( !next_button )
@@ -156,29 +164,29 @@ function wall_image_pagination_update()
   if( next_button ) pagination.appendChild(next_button);
 }
 
-function wall_image_grid_update_callback(data)
+function wall_grid_update_callback(data)
 {
   var parsed_data = JSON.parse(data);
   if( parsed_data.status != 0 )
     return rpc_callback(data);
 
   var wall = document.getElementById('wall-container');
-  var images_json = parsed_data.images;
-  if( images_json.length<1 )
+  var wall_json = parsed_data.wall;
+  if( wall_json.length<1 )
     return;
 
   var collection = document.getElementsByClassName('wall-image-container');
   if( collection.length >= 48 )
-    images_json.forEach(function(item, index)
+    wall_json.forEach(function(item, index)
     {
       if( collection.length>1 )
         collection[collection.length - 1].remove();
     });
 
   var images = [];
-  images_json.forEach(function(item, index)
+  wall_json.forEach(function(item, index)
   {
-    images.push( wall_image_insert(images_json[index]) );
+    images.push( wall_grid_insert(wall_json[index]) );
   });
 
   images.reverse();
@@ -197,18 +205,21 @@ function wall_image_grid_update_callback(data)
   if( collection.length >= 48 && document.getElementById('upload_box').style.display != 'none' )
     collection[collection.length - 1].style.display = 'none';
 
-  wall_image_pagination_update();
+  wall_grid_pagination_update();
 }
 
-function wall_image_grid_update(offset, direction, limit)
+function wall_grid_update(offset, direction, limit)
 {
+  if( !context || context.length === 0 )
+    return;
+
   var formdata = new FormData();
   formdata.append('offset', offset);
   formdata.append('direction', direction);
   formdata.append('limit', limit);
 
-  rpc_send('api.php?context=post&action=collection_get', formdata, function(result){
-    wall_image_grid_update_callback(result);
+  rpc_send('api.php?context='+ context +'&action=collection_fetch', formdata, function(result){
+    wall_grid_update_callback(result);
   });
 }
 
@@ -261,7 +272,7 @@ function wall_image_preview_refresh(event)
     if( last_image )
       last_image.style.display = ( event.target.checked ? 'none' : 'inherit' );
 
-    wall_image_pagination_update();
+    wall_grid_pagination_update();
   });
 
   var parsed_url = new URL(window.location.href);
@@ -271,7 +282,7 @@ function wall_image_preview_refresh(event)
   {
     var offset = query_match[1];
     var direction = query_match[2];
-    wall_image_grid_update(offset, direction, 48);
+    wall_grid_update(offset, direction, 48);
 
     document.getElementById('sync_trigger').addEventListener('change', function(event){
       if( event.target.checked )
@@ -281,7 +292,7 @@ function wall_image_preview_refresh(event)
   else
   {
     // Update wall at page load.
-    wall_image_grid_update(0, 'ASC', 48);
+    wall_grid_update(0, 'ASC', 48);
 
     var sync_interval;
     var sync_trigger = document.getElementById('sync_trigger');
@@ -293,8 +304,8 @@ function wall_image_preview_refresh(event)
       {
         sync_interval = setInterval(function()
         {
-          var offset = wall_image_get_last_id();
-          wall_image_grid_update(offset, 'ASC', 48);
+          var offset = wall_grid_get_last_id();
+          wall_grid_update(offset, 'ASC', 48);
 
         }, 3000);
 

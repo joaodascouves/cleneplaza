@@ -17,7 +17,7 @@
       `p`.`body` AS `message` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` WHERE `p`.`ID`=%s",
       $id));
 
-    if( mysqli_num_rows($query)>0 )
+    if( $query && mysqli_num_rows($query)>0 )
     {
       $post = mysqli_fetch_assoc($query);
       return $post;
@@ -30,51 +30,16 @@
     @param Array parameters
     @return String
   */
-  function post_collection_get($parameters)
+  function post_collection_fetch($parameters)
   {
-    global $config;
-    global $conn;
-
-    $limit = @validate_natural_num($parameters['limit']);
-    $limit = ( $limit > 0 && $limit <= 48 ? $limit : 47 );
-
-    $offset = @validate_natural_num($parameters['offset']);
-    $direction = ( !@strcmp('ASC', $parameters['direction']) ? '>' : '<' );
-
-    $query = mysqli_query($conn, sprintf("SELECT `p`.`ID` AS `ID`, `p`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
-      `p`.`file_path` AS `file_path`, `p`.`file_name` AS `file_name`,
-      (LENGTH(TRIM(`p`.`body`)) - LENGTH(REPLACE(TRIM(`p`.`body`), ' ', ''))) + ROUND(LENGTH(TRIM(`p`.`body`))/LENGTH(TRIM(`p`.`body`)))
-      AS `words_count` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` %s ORDER BY `p`.`ID` DESC LIMIT %d",
-
-      ( $direction === '>' ?
-        sprintf("WHERE `p`.`ID`%s%d AND `p`.`ID`>$offset",  ( $offset<49 ? '>' : '<'), ( $offset<49 ? $offset : $offset+49 ) ) :
-        sprintf("WHERE `p`.`ID`<%d", $offset)
-      ),
-
-      $limit
-      ));
-
-    if( !$query || mysqli_num_rows($query) == 0 )
-      return Array(
-        'status' => 0,
-        'message' => '',
-        'images' => Array()
-      );
-
-    $wall = Array();
-    while( ($row = mysqli_fetch_assoc($query)) )
-    {
-      if( !$row['words_count'] )
-        $row['words_count'] = 0;
-
-      $wall[] = $row;
-    }
-
-    return Array(
-      'status' => 0,
-      'message' => '',
-      'images' => $wall
-    );
+    return collection_fetch($parameters, 'posts', Array(
+      'file_path',
+      Array('`c`.`file_name`', 'label'),
+      Array(
+        "IFNULL((LENGTH(TRIM(`c`.`body`)) - LENGTH(REPLACE(TRIM(`c`.`body`), ' ', '')))+ROUND(LENGTH(TRIM(`c`.`body`))/LENGTH(TRIM(`c`.`body`))), 0)",
+        'stats'
+        )
+    ));
   }
 
   /*

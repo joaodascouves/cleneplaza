@@ -48,9 +48,13 @@ CREATE TABLE `cl_mirrors`
   `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
   `user_id` INTEGER NOT NULL,
 
-  `url` VARCHAR(128) NOT NULL,
   `ip`  INT(4) UNSIGNED NOT NULL,
-  `content` TEXT NOT NULL,
+  `url` VARCHAR(128) NOT NULL,
+  `domain` VARCHAR(128) NOT NULL,
+  `flags` SET('homepage', 'reincident', 'mass'),
+
+  `fullpage_path` VARCHAR(60) NOT NULL,
+  `preview_path`  VARCHAR(60) NOT NULL,
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

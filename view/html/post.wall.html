@@ -59,12 +59,13 @@ EOF;
       if( isset($_GET['offset']) )
         $offset = @validate_natural_num($_GET['offset']);
 
-      $wall_collection = post_collection_get(Array(
+      $wall_collection = post_collection_fetch(Array(
         'offset' => $offset,
         'direction' => $direction,
         'limit' => 48
-      ))['images'];
+      ))['wall'];
 
+      if( $wall_collection )
       foreach( $wall_collection as $post )
       {
         echo "<div class=\"wall-image-container\">
@@ -75,8 +76,8 @@ EOF;
             <a href=\"?context=profile&profileId={$post['user_id']}\">~{$post['creator']}</a>
             <!-- </div> -->
           </div>
-          <div class=\"wall-image-label wall-image-label-top-right\">(W:{$post['words_count']}|R:0|I:0)</div>
-          <div class=\"wall-image-label wall-image-label-file_name\">{$post['file_name']}</div>
+          <div class=\"wall-image-label wall-image-label-top-right\">{$post['stats']}</div>
+          <div class=\"wall-image-label wall-image-label-file_name\">{$post['label']}</div>
         </div>";
       }
     }
