@@ -1,4 +1,4 @@
-<div id="post-container">
+<div class="post-container post-container-main">
   {{ file_name }}<br/>
   <small>
     Uploaded by <a href="?context=profile&profileId={{ user_id }}">{{ creator }}</a> at {{ created_at }}
@@ -12,3 +12,5 @@
     {{ message }}
   </p>
 </div>
+{{? echo get_view('comment.wall'); }}
+{{? echo get_view('comment.insert'); }}

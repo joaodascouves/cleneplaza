@@ -11,6 +11,7 @@
   $config['upload_path'] = 'userfiles/';
 
   // post settings
+  $config['anti_flood_tolerance'] = 10; // 10 seconds
   $config['mirror_unique_expiry'] = 60*60*24*365; // 1 year.
   $config['image_unique_expiry'] = 60*60*24;  // 1 day.
 

@@ -1,0 +1,33 @@
+<div id="wall-options-container">
+  <nav>
+    <ul>
+    {{? //<?
+    if( !no_script() )
+    {
+      $wall_opts = <<<EOF
+<li>
+  <input type="checkbox" id="sync_trigger" />
+  <label for="sync_trigger">
+    Synchronization
+  </label>
+</li>
+<li>
+  <input type="checkbox" id="post_trigger" disabled />
+  <label for="post_trigger">
+    Post
+  </label>
+</li>
+EOF;
+
+      echo $wall_opts;
+    }
+    }}
+    <li>
+      <a href="?context={{? echo (!@strcmp('home', $_GET['context'])?'post':$_GET['context']); }}&action=submit">Make single</a>
+    </li>
+    <li class="right-tab">
+      <a href="#bottom-container">Bottom</a>
+    </li>
+    </ul>
+  </nav>
+</div>

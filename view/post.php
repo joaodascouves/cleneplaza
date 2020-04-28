@@ -12,9 +12,9 @@
 
   include 'includes/controls/post_control.php';
 
-  $action = ( isset($_GET['action']) ? $_GET['action'] : 'makePost' );
+  $action = ( isset($_GET['action']) ? $_GET['action'] : 'submit' );
 
-  if( !strcmp('makePost', $action) )
+  if( !strcmp('submit', $action) )
   {
     echo make_page(Array(
       'body.inner' => ( $_SERVER['REQUEST_METHOD'] !== 'POST' ?

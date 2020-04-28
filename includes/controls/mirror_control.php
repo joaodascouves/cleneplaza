@@ -1,5 +1,26 @@
 <?php
 
+  /*
+    Alias for context_entry_by_id (includes/controls/core.php).
+
+    @parameters Integer id
+    @return Array
+  */
+  function mirror_get_by_id($id)
+  {
+    return context_entry_by_id('mirrors', $id, Array(
+      'url',
+      'fullpage_path',
+      'created_at'
+    ));
+  }
+
+  /*
+    Alias for collection_fetch (includes/controls/core.php).
+
+    @parameter Array $parameters
+    @return Array
+  */
   function mirror_collection_fetch($parameters)
   {
     return collection_fetch($parameters, 'mirrors', Array(
@@ -194,7 +215,7 @@
       );
 
       file_put_contents($mirror_fullpage, $page_body);
-      system("wkhtmltoimage --quality 30 --height 728 $mirror_fullpage $mirror_thumb &>/dev/null");
+      system("wkhtmltoimage --quality 30 --height 650 --crop-x 135 --crop-w 750 --crop-y 20 $mirror_fullpage $mirror_thumb &>/dev/null");
 
 
       $flags_str = '';

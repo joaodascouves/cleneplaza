@@ -1,0 +1,16 @@
+<div class="post-container post-container-main mirror-content">
+  {{ url }}<br/>
+  <small>
+    Uploaded by <a href="?context=profile&profileId={{ user_id }}">{{ creator }}</a> at {{ created_at }}
+  </small>
+
+  <div class="mirror-iframe">
+    <iframe src="{{ fullpage_path }}"></iframe>
+  </div>
+
+  <p class="post-text">
+    {{ message }}
+  </p>
+</div>
+{{? echo get_view('comment.wall'); }}
+{{? echo get_view('comment.insert'); }}

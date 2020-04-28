@@ -54,7 +54,10 @@
     global $conn;
 
     if( !exif_imagetype($file['tmp_name']) || !@in_array($file_ext = end(explode('/', $file['type'])), $config['allowed_exts']) )
-      return 1; // Invalid file.
+      return Array(
+        'status' => $error++,
+        'message'=> 'Invalid file type.'
+      );
 
     $file_sum = md5_file($file['tmp_name']);
     $tolerance = time() - $config['image_unique_expiry'];
@@ -70,13 +73,16 @@
     ));
 
     if( !$query )
-    {
-      die(mysqli_error($conn));
-      return 4;
-    }
+      return Array(
+        'status' => $error++,
+        'message'=> 'Unknown upload error.'
+      );
 
     if( mysqli_num_rows($query)>0 )
-      return 2; // File recently posted in that context.
+      return Array(
+        'status' => $error++,
+        'message'=> 'Image was recently posted.'
+      );
 
     $file_path = sprintf("%s%s/%s%s-%s.%s",
       $config['upload_path'],
@@ -90,13 +96,58 @@
     if( move_uploaded_file($file['tmp_name'], $file_path) )
     {
       return Array(
-        $file_path,
-        $file['name'],
-        $file_sum
+        'status' => 0,
+        'path' => $file_path,
+        'name' => $file['name'],
+        'sum' => $file_sum
       );
     }
     else
-      return 3; // File couldn't be uploaded.
+      return Array(
+        'status' => 3,
+        'message'=> 'File couldn\'t be uploaded.'
+      );
+  }
+
+  /*
+    Returns an associative array containing context entry information,
+    or returns false.
+
+    @parameter String $context
+    @parameter Integer id
+    @return Array
+  */
+  function context_entry_by_id($context, $id, $items = Array())
+  {
+    global $conn;
+    global $config;
+
+    $rows_str = '';
+
+    if( !@empty($items) )
+    foreach( $items as $index => $item )
+    {
+      if( @is_array($item) )
+        $rows_str .= "{$item[0]} AS `{$item[1]}`";
+      else
+        $rows_str .= "`c`.`{$item}` AS `{$item}`";
+
+      if( $index < sizeof($items)-1  )
+        $rows_str .= ',';
+    }
+
+    $query = mysqli_query($conn, sprintf("SELECT `c`.`ID` AS `ID`, `c`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
+      %s FROM `cl_%s` AS `c` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`c`.`user_id` WHERE `c`.`ID`=%s",
+
+      $rows_str,
+      $context,
+      $id));
+
+    if( $query && mysqli_num_rows($query)>0 )
+    {
+      $post = mysqli_fetch_assoc($query);
+      return $post;
+    }
   }
 
   /*
@@ -137,7 +188,7 @@
       $where_str .= $condition;
 
       if( $index < sizeof($where)-1 )
-        $where_str .= ',';
+        $where_str .= ' AND ';
     }
 
     $query = mysqli_query($conn, sprintf("SELECT `c`.`ID` as `ID`, `c`.`user_id` AS `user_id`, `u`.`name` AS `creator`%s
@@ -173,4 +224,37 @@
       'message'=>'',
       'wall' => $wall
     );
+  }
+
+  /*
+    Checks if current user has already created a entry within x seconds.
+
+    @parameter String context
+    @return Array
+  */
+  function anti_flood_step($context)
+  {
+    global $config;
+    global $conn;
+
+    $query = mysqli_query($conn, sprintf("SELECT UNIX_TIMESTAMP(`created_at`) AS `created_at` FROM `cl_%s`
+      WHERE `user_id`=%d ORDER BY `created_at` DESC LIMIT 1",
+
+      $context,
+      current_user_get()['ID']
+    ));
+
+    if( !$query || mysqli_num_rows($query) === 0 )
+      return false;
+
+    $tolerance = time() - $config['anti_flood_tolerance'];
+    $row = mysqli_fetch_assoc($query);
+
+    if( $row['created_at']>$tolerance )
+    {
+      return Array(
+        'status' => 100,
+        'message'=> 'Please wait '. intval($row['created_at'] - $tolerance) .' seconds before posting.'
+      );
+    }
   }

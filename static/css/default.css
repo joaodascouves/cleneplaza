@@ -42,6 +42,23 @@ textarea {
   padding: 11px 10px;
 }
 
+.list-form {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.list-form dt {
+  padding-top: 15px;
+}
+
+.list-form dt:first-of-type {
+  padding-top: 0;
+}
+
+.list-form dd {
+  margin-left: 0;
+}
+
 #menu-container {
   max-width: 100vw;
   /* transform: scale(0.2), */
@@ -60,17 +77,22 @@ textarea {
 }
 
 #menu-container ul {
-  list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  list-style-type: none;
 }
 
 #menu-container li {
   float: left;
+  margin: -1px 0 -1px -1px;
   border: 0 solid black;
   border-width: 1px 1px 1px 1px;
-  margin: -1px 0 -1px -1px;
+}
+
+#menu-container li.right-tab {
+  /* position: relative; */
+  float: right;
 }
 
 #menu-container li a {
@@ -84,7 +106,7 @@ textarea {
   cursor: pointer;
 }
 
-.form-button {
+input[type=submit] {
   width: 120px;
   height: 20px;
   color: #fff;
@@ -95,12 +117,12 @@ textarea {
   margin-top: 10px;
 }
 
-.form-button:hover {
+input[type=submit]:hover {
   background: #feee14;
   cursor: pointer;
 }
 
-.form-button:disabled:hover {
+input[type=submit]:disabled:hover {
   background: #235551;
 }
 
@@ -141,6 +163,7 @@ textarea {
   min-height: 580vh;
   padding-left: 1.4%;
   position: relative;
+  font-size: 14px;
 }
 
 #bottom-container {
@@ -191,6 +214,11 @@ td.td-d {
     width: 200px;
   }
 
+  textarea {
+    width: 300px;
+    height: 150px;
+  }
+
   #menu-container li a {
     font-size: 8px;
     padding: 5px;
@@ -198,6 +226,7 @@ td.td-d {
 
   #inner-container {
     margin-bottom: 50px;
+    font-size: 12px;
   }
 
   #bottom-container {

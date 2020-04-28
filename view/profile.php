@@ -2,9 +2,10 @@
 
   static $page_info = Array(
     'title' => 'Profile',
-    'priority' => 0,
+    'priority' => 1,
     'permission' => Array('user','mod'),
-    'styles' => Array('profile')
+    'styles' => Array('profile'),
+    'align' => 'right'
   );
 
   if( parse_context(__FILE__) )

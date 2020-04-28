@@ -51,7 +51,7 @@ CREATE TABLE `cl_mirrors`
   `ip`  INT(4) UNSIGNED NOT NULL,
   `url` VARCHAR(128) NOT NULL,
   `domain` VARCHAR(128) NOT NULL,
-  `flags` SET('homepage', 'reincident', 'mass'),
+  `flags` SET('homepage', 'reincident', 'mass') DEFAULT NULL,
 
   `fullpage_path` VARCHAR(60) NOT NULL,
   `preview_path`  VARCHAR(60) NOT NULL,
@@ -65,6 +65,14 @@ CREATE TABLE `cl_comments`
 (
   `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
   `user_id` INTEGER NOT NULL,
+  `entry_id`  INTEGER NOT NULL,
+  `context`  ENUM('post', 'mirror') DEFAULT NULL,
+
+  `file_path`  VARCHAR(60) DEFAULT NULL,
+  `file_name`  VARCHAR(128) DEFAULT NULL,
+  `file_sum` VARCHAR(32) DEFAULT NULL,
+
+  `body`  TEXT NOT NULL,
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

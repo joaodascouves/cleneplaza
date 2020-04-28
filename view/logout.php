@@ -2,8 +2,9 @@
 
   static $page_info = Array(
     'title' => 'Logout',
-    'priority' => 50,
-    'permission' => Array('user')
+    'priority' => 0,
+    'permission' => Array('user'),
+    'align' => 'right'
   );
 
   if( parse_context(__FILE__) )

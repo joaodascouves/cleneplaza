@@ -55,7 +55,7 @@
       if( !@empty($_FILES['propic']['name']) )
         $upload_result = parse_and_upload_image($_FILES['propic'], 'users');
 
-      if( @empty($_FILES['propic']['name']) || @is_array($upload_result) )
+      if( @empty($_FILES['propic']['name']) || $upload_result['status'] === 0 )
       {
         $query = mysqli_query($conn, sprintf("UPDATE `cl_users` SET `name`='%s', `about`='%s'%s WHERE `ID`=%d",
           $parameters['name'],
@@ -83,15 +83,7 @@
           $error = "User was not updated.";
       }
       else
-      {
-        switch( $upload_result )
-        {
-          case 1: $error = 'Invalid file.'; break;
-          case 2: $error = 'Profile picture already taken.'; break;
-          case 3: $error = 'File coudn\'t be uploaded.'; break;
-          default: $error = 'Unknown error.'; break;
-        }
-      }
+        $error = $upload_result['message'];
     }
 
 

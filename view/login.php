@@ -3,7 +3,8 @@
   static $page_info = Array(
     'title' => 'Login',
     'priority' => 49,
-    'permission' => Array('guest')
+    'permission' => Array('guest'),
+    'align' => 'right'
   );
 
   if( parse_context(__FILE__) )

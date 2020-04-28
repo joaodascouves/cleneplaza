@@ -1,3 +1,8 @@
+.mirror-content {
+  width: 91.5vw;
+  height: 500px;
+}
+
 .mirror-list-container {
   font-size: 13px;
 }
@@ -12,4 +17,13 @@
 
 .mirror-list-container tr:hover {
   background: #235661;
+}
+
+.mirror-iframe {
+  padding: 15px 0 0 0;
+}
+
+.mirror-iframe iframe{
+  width: 99.5%;
+  height: 498px;
 }

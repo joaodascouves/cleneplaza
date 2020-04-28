@@ -23,9 +23,9 @@ function inject_content($page, $replacements = Array())
 
         eval(sprintf("$%s['%s'] = %s%s%s;",
           str_replace('.', '_', $name),
-          $key,
+          secure_str($key),
           $delimiter,
-          $value,
+          secure_str($value),
           $delimiter
         ));
       }
@@ -135,7 +135,8 @@ function make_menu()
         'context' => $context,
         'title' => $page_info['title'],
         'permission' => $page_info['permission'],
-        'styles' => ( isset($page_info['styles']) ? $page_info['styles'] : Array() )
+        'styles' => ( isset($page_info['styles']) ? $page_info['styles'] : Array() ),
+        'align' => ( isset($page_info['align']) ? $page_info['align'] : 'left' )
       );
     }
   }

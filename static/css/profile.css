@@ -2,14 +2,6 @@
   width: 300px;
 }
 
-#profile-container ul {
-  padding-left: 20px;
-}
-
-#profile-container li {
-  padding-bottom: 25px;
-}
-
 #profile-container p.about {
   max-width: 90%;
   padding: 5px;

@@ -8,7 +8,8 @@
     'post_collection_fetch' =>  Array( Array('user', 'mod'),  Array('POST') ),
     'post_image_insert' =>  Array( Array('user', 'mod'),  Array('POST') ),
 
-    'mirror_collection_fetch' => Array( Array('user', 'mod'), Array('POST') )
+    'mirror_collection_fetch' => Array( Array('user', 'mod'), Array('POST') ),
+    'comment_message_insert' => Array( Array('user', 'mod'), Array('POST'))
 
   );
 

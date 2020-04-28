@@ -1,15 +1,22 @@
-#post-container {
+.post-container {
+  display: table;
+  float: left;
+  clear: left;
   background: var(--secondary-bg-color);
-  width: 94.5%;
-  padding: 15px;
+  max-width: 94.5%;
+  padding: 10px;
+  margin-bottom: 10px;
   border: 1px solid black;
+}
+
+.post-container-main {
+  margin-bottom: 50px;
 }
 
 .post-image-container
 {
-  width: 50%;
-  padding-top: 30px;
-  padding-bottom: 20px;
+  width: 300px;
+  padding: 10px 0 10px 0;
 }
 
 p {

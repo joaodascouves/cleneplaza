@@ -2,8 +2,9 @@
 
   static $page_info = Array(
     'title' => 'Register',
-    'priority' => '50',
-    'permission' => Array('guest')
+    'priority' => 0,
+    'permission' => Array('guest'),
+    'align' => 'right'
   );
 
   if( parse_context(__FILE__) )

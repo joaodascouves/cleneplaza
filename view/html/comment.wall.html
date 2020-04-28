@@ -1,0 +1,31 @@
+{{?
+
+  include 'controls/comment_control.php';
+
+  if( no_script() )
+  {
+    $comment_collection = comment_collection_fetch(Array(
+      'offset' => 0,
+      'direction'=> 'ASC',
+      'limit' => 0
+    ), $_GET["{$_GET['context']}Id"])['wall'];
+
+    if( $comment_collection )
+    {
+      $comment_collection = array_reverse($comment_collection);
+
+      foreach( $comment_collection as $comment )
+      {
+        $image_tag = ( !@empty($comment['file_path']) ?
+          "<img class=\"post-image-container\" src=\"{$comment['file_path']}\"><br/>" : '');
+
+        echo "<div class=\"post-container\">
+            #{$comment['ID']} {$comment['creator']} at <small>{$comment['created_at']}</small><br/><br/>
+            {$image_tag}
+            {$comment['body']}
+          </div>";
+      }
+    }
+  }
+
+}}

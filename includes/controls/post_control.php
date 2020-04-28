@@ -1,27 +1,19 @@
   <?php
 
   /*
-    Returns an associative array containing post information,
-    or returns false.
+    Alias for context_entry_by_id (includes/controls/core.php).
 
     @parameters Integer id
     @return Array
   */
   function post_get_by_id($id)
   {
-    global $conn;
-    global $config;
-
-    $query = mysqli_query($conn, sprintf("SELECT `p`.`ID` AS `ID`, `p`.`user_id` AS `user_id`, `u`.`name` AS `creator`,
-      `p`.`file_path` AS `file_path`, `p`.`file_name` AS `file_name`, `p`.`created_at`,
-      `p`.`body` AS `message` FROM `cl_posts` AS `p` INNER JOIN `cl_users` AS `u` ON `u`.`ID`=`p`.`user_id` WHERE `p`.`ID`=%s",
-      $id));
-
-    if( $query && mysqli_num_rows($query)>0 )
-    {
-      $post = mysqli_fetch_assoc($query);
-      return $post;
-    }
+    return context_entry_by_id('posts', $id, Array(
+      'file_path',
+      'file_name',
+      'created_at',
+      Array('`c`.`body`', 'body')
+    ));
   }
 
   /*
@@ -60,31 +52,22 @@
         'message'=> 'Image filename can not be empty.'
       );
 
-    $upload_result = parse_and_upload_image($parameters['image_file'], 'posts', 'pending');
-    if( !is_array($upload_result) )
-    {
-      switch( $upload_result )
-      {
-        case 1: $error = 'Invalid file.'; break;
-        case 2: $error = 'Image was posted recently.'; break;
-        case 3: $error = 'File coudn\'t be uploaded.'; break;
-        default: $error = 'Unknown error.'; break;
-      }
+    if( @is_array(($flood_msg = anti_flood_step('posts'))) )
+      return $flood_msg;
 
-      return Array(
-        'status' => $upload_result,
-        'message'=> $error
-      );
-    }
+    $upload_result = parse_and_upload_image($parameters['image_file'], 'posts', 'pending');
+
+    if( $upload_result['status'] !== 0 )
+      return $upload_result;
 
     $message = ( !@empty($parameters['message']) ? $parameters['message'] : '');
 
     $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_name`, `file_sum`, `body`)
       VALUES ('%d', '%s', '%s', '%s', '%s')",
       current_user_get()['ID'],
-      $upload_result[0],
-      $upload_result[1],
-      $upload_result[2],
+      $upload_result['path'],
+      $upload_result['name'],
+      $upload_result['sum'],
       $message)
     );
 

@@ -1,38 +1,4 @@
-<div id="center-modal">
-  <a class="modal-close" href="#" onclick="parentNode.style.display='none'">Close (×)</a>
-</div>
-
-<div id="wall-options-container">
-  <table style="display: inline; position: relative">
-    <tr class="tr-d">
-{{? //<?
-  if( !no_script() )
-  {
-    $wall_opts = <<<EOF
-      <td class="td-d">
-        <input type="checkbox" id="sync_trigger" />
-        <label for="sync_trigger">
-          Synchronization
-        </label>
-      </td>
-      <td class="td-d">
-        <input type="checkbox" id="post_trigger" disabled />
-        <label for="post_trigger">
-          Post
-        </label>
-      </td>
-EOF;
-
-    echo $wall_opts;
-  }
-}}
-      <td class="td-d">
-        <a href="?context=mirror&action=submit">Make single</a>
-      </td>
-    </tr>
-  </table>
-</div>
-
+{{? echo get_view('wall.options'); }}
 <section>
   <div id="wall-container">
     <div class="wall-image-container" id="upload_box" style="display: none">
@@ -51,7 +17,7 @@ EOF;
   {{? //<?
     if( no_script() )
     {
-      include 'controls/post_control.php';
+      //include 'controls/mirror_control.php';
 
       $offset = 0;
       $direction = ( !@strcmp('DESC', $_GET['direction']) ? 'DESC' : 'ASC' );

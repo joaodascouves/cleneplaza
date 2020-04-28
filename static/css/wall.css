@@ -1,3 +1,7 @@
+input[type=checkbox] {
+  vertical-align: top;
+}
+
 #image_file {
   display: none;
 }
@@ -17,7 +21,26 @@
 
 #wall-options-container {
   display: inline;
+  max-width: 100%;
   font-size: 13px;
+}
+
+#wall-options-container ul {
+  margin: 0;
+  padding: 0 0 1% 0;
+  list-style-type: none;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+#wall-options-container li {
+  float: left;
+  padding-right: 3%;
+}
+
+#wall-options-container li.right-tab {
+  float: right;
+  padding-right: 3%;
 }
 
 .wall-image-container {
@@ -48,12 +71,12 @@
 }
 
 .wall-image-label {
-  font-size: 13.5px;
   padding-top: 1.5%;
-  padding-left: 0.5vw;
+  padding-left: 0.7vw;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 12px;
 }
 
 .wall-image-label-top-right {
@@ -69,17 +92,25 @@
   left: 0;
   height: 20px;
   max-width: 65%;
+  font-size: 14px;
 }
 
 @media (max-width: 480px) {
-  #wall-options-container {
-    display: inline;
+  input[type=checkbox] {
+    margin-top: -2px;
+    transform: scale(0.8);
+  }
+
+  #wall-options-container ul {
+    /* display: inline; */
+    padding-top: 5px;
+    margin-bottom: -10px;
     font-size: 8px;
   }
 
   .wall-image-container {
     width: 98%;
-    height: 335px;
+    height: 325px;
     margin-top: 2%;
   }
 
@@ -97,14 +128,14 @@
   .wall-image-label
   {
     padding-left: 10px;
+    font-size: 11px;
+  }
+
+  .wall-image-label-top-left {
     font-size: 16px;
   }
 
   .wall-image-label-top-right {
     font-size: 12px;
-  }
-
-  .wall-image-label-creator {
-    /**/
   }
 }

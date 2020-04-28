@@ -2,7 +2,7 @@
 
   static $page_info = Array(
     'title' => 'Last bans',
-    'priority' => 2,
+    'priority' => 4,
     'permission' => Array('user', 'mod')
   );
 

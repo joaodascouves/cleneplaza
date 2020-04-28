@@ -1,6 +1,6 @@
 function rpc_bind(item, formdata)
 {
-  if( item.tagName.toLowerCase() == 'input' )
+  if( ['input', 'textarea'].includes(item.tagName.toLowerCase()) )
   if( item.type.toLowerCase() != 'file' )
     formdata.append(item.name, item.value);
   else
@@ -52,11 +52,11 @@ function rpc_callback(data)
       console.log(data);
   }
 
-  if( document.getElementById('send_file') )
+  if( document.getElementById('send_file') && parsed_data.status !== 100 )
     document.getElementById('send_file').disabled = true;
 
-  if( document.getElementById('wall_grid_preview') )
-    document.getElementById('wall_grid_preview').src = '/clenexyz/foto.jpg';
+  if( document.getElementById('wall_image_preview') && parsed_data.status !== 100 )
+    document.getElementById('wall_image_preview').src = '/clenexyz/foto.jpg';
 }
 
 function wall_grid_insert(image)
@@ -261,6 +261,19 @@ function wall_image_preview_refresh(event)
   /*
     End of recursive binding.
   */
+  if( !document.getElementById('wall-container') )
+    return;
+
+  document.getElementById('sync_trigger').addEventListener('change', function(event){
+    if( event.target.checked )
+    {
+      if( !window.location.href.match(/&sync=true/) )
+        location.href = '?context='+ (context === 'post' ? 'home' : context) +'&sync=true';
+    }
+    else
+      location.href = '?context='+ (context === 'post' ? 'home' : context) +'&sync=false';
+  });
+
   document.getElementById('post_trigger').addEventListener('change', function(event)
   {
     var upload_box = document.getElementById('upload_box');
@@ -283,11 +296,6 @@ function wall_image_preview_refresh(event)
     var offset = query_match[1];
     var direction = query_match[2];
     wall_grid_update(offset, direction, 48);
-
-    document.getElementById('sync_trigger').addEventListener('change', function(event){
-      if( event.target.checked )
-        location.href = '?context=home&sync=true';
-    });
   }
   else
   {
@@ -298,41 +306,31 @@ function wall_image_preview_refresh(event)
     var sync_trigger = document.getElementById('sync_trigger');
     var post_trigger = document.getElementById('post_trigger');
 
-    sync_trigger.addEventListener('change', function(event)
-    {
-      if( event.target.checked )
-      {
-        sync_interval = setInterval(function()
-        {
-          var offset = wall_grid_get_last_id();
-          wall_grid_update(offset, 'ASC', 48);
-
-        }, 3000);
-
-        post_trigger.disabled = false;
-      }
-      else
-      {
-        clearInterval(sync_interval);
-
-        if( post_trigger.checked || post_trigger.disabled == false )
-        {
-          post_trigger.checked = false;
-          post_trigger.disabled = true;
-
-          var post_trigger_event = document.createEvent("HTMLEvents");
-          post_trigger_event.initEvent('change', true, false, {checked: false});
-          post_trigger.dispatchEvent(post_trigger_event);
-        }
-      }
-    });
-
     if( window.location.href.match(/&sync=true/) )
     {
       sync_trigger.checked = true;
-      var sync_trigger_event = document.createEvent("HTMLEvents");
-      sync_trigger_event.initEvent('change', true, false, {checked: false});
-      sync_trigger.dispatchEvent(sync_trigger_event);
+      sync_interval = setInterval(function()
+      {
+        var offset = wall_grid_get_last_id();
+        wall_grid_update(offset, 'ASC', 48);
+
+      }, 3000);
+
+      post_trigger.disabled = false;
+    }
+    else
+    {
+      clearInterval(sync_interval);
+
+      if( post_trigger.checked || post_trigger.disabled == false )
+      {
+        post_trigger.checked = false;
+        post_trigger.disabled = true;
+
+        var post_trigger_event = document.createEvent("HTMLEvents");
+        post_trigger_event.initEvent('change', true, false, {checked: false});
+        post_trigger.dispatchEvent(post_trigger_event);
+      }
     }
   }
 
