@@ -33,6 +33,7 @@ CREATE TABLE `cl_posts`
   `file_name`  VARCHAR(128) NOT NULL,
   `file_sum` VARCHAR(32) NOT NULL,
 
+  `title` VARCHAR(60) DEFAULT NULL,
   `body`  TEXT DEFAULT NULL,
 
   `visible`   BOOLEAN DEFAULT true,
@@ -108,10 +109,12 @@ INSERT INTO `cl_users` (
   `name`,
   `email`,
   `password`,
-  `about`
+  `about`,
+  `level`
 ) VALUES (
   'teste',
   'teste',
   MD5(CONCAT('teste', 'NOLETO')),
-  'Test user.'
+  'Test user.',
+  'admin'
 );

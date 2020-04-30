@@ -1,5 +1,7 @@
 <?php
 
+  include 'user_control.php';
+
   /*
     Returns user object stored in /includes/controls/login.php.
 
@@ -7,7 +9,7 @@
   */
   function current_user_get()
   {
-    $user = $_SESSION['user'];
+    $user = user_get_by_id($_SESSION['user_id']);
     return $user;
   }
 
@@ -52,6 +54,8 @@
     // $config['image_unique_expiry']
     global $config;
     global $conn;
+
+    $error = 1;
 
     if( !exif_imagetype($file['tmp_name']) || !@in_array($file_ext = end(explode('/', $file['type'])), $config['allowed_exts']) )
       return Array(

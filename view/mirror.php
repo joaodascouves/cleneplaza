@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Mirroring',
     'priority' => 0,
-    'permission' => Array('user', 'mod'),
+    'permission' => Array('admin', 'mod', 'user'),
     'styles' => Array('mirror', 'wall', 'post')
   );
 
@@ -35,7 +35,7 @@
   {
     echo make_page(Array(
       'body.inner' => get_view('mirror.display',
-        mirror_get_by_id(validate_natural_num($_GET['mirrorId'])))
+        mirror_get_by_id(validate_natural_num($_GET['entry_id'])))
     ));
   }
   // echo make_page(Array(

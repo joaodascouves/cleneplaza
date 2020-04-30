@@ -1,31 +1,42 @@
 <div id="profile-container">
-  <ul class="list-form">
-    <li>
-      <h2 style="display: inline">{{ name }}</h2>
+  <dl class="list-form">
+    <dt style="display: inline">
+      <h3 style="display: inline">
+        {{ name }}
+      </h3>
       {{?
-        if( !isset($_GET['profileId']) ||
-          @validate_natural_num($_GET['profileId']) == current_user_get()['ID'] )
+        if( !isset($_GET['profile_id']) ||
+          @validate_natural_num($_GET['profile_id']) == current_user_get()['ID'] )
         {
           echo sprintf("<a href=\"?context=profile%s&action=edit\">(edit)</a>",
-            ( isset($_GET['profileId']) ? sprintf("&profileId=%d", $_GET['profileId']) : '' ));
+            ( isset($_GET['profile_id']) ? sprintf("&profile_id=%d", $_GET['profile_id']) : '' ));
         }
-      }}<br/><br/>
+      }}
+    </dt><br/><br/>
+  <dd>
     <img class="profile-image" src="{{ file_path }}" alt="{{ file_name }}">
-    </li>
+    <div class="post-file-name">
+      <a href="{{ file_path }}">{{ file_name }}</a>
+    </div>
+  </dd>
 
-    <li>
-      About me<br/>
-      <p class="about">
-        {{ about }}
-      </p>
-    </li>
+  <dt>
+    About me
+  </dt>
+  <dd>
+    <p class="about">
+      {{ about }}
+    </p>
+  </dd>
 
-    <li>
-      Stats<br/>
-      <p class="about">
-        Posts made: {{ posts_count }}<br/>
-        Submited mirrors: 0
-      </p>
-    </li>
-  </ul>
+  <dt>
+    Stats
+  </dt>
+  <dd>
+  <p class="about">
+    Posts made: {{ posts_count }}<br/>
+    Submited mirrors: 0
+  </p>
+  </dd>
+</dl>
 </div>

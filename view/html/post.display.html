@@ -1,15 +1,16 @@
 <div class="post-container post-container-main">
-  {{ file_name }}<br/>
+  <div class="post-title">{{ title }}</div>
   <small>
-    Uploaded by <a href="?context=profile&profileId={{ user_id }}">{{ creator }}</a> at {{ created_at }}
+    Uploaded by <a href="?context=profile&profile_id={{ user_id }}">{{ creator }}</a> at {{ created_at }}
   </small>
 
-  <div class="post-image-container">
-    <img style="width: 300px" src="{{ file_path }}">
+  <div class="post-file">
+    <img class="post-file-file" src="{{ file_path }}"/><br/>
+    <small style="width:100%"><a href="{{ file_path }}">{{ file_name }}</a></small>
   </div>
 
   <p class="post-text">
-    {{ message }}
+    {{ body }}
   </p>
 </div>
 {{? echo get_view('comment.wall'); }}

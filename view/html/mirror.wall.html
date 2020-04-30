@@ -40,9 +40,9 @@
         echo "<div class=\"wall-image-container\">
           <img class=\"wall-image-file\" src=\"{$post['file_path']}\">
           <div class=\"wall-image-label wall-image-label-top-left\">
-            <a href=\"?context=mirror&mirrorId={$post['ID']}&action=show\">#{$post['ID']}</a>
+            <a href=\"?context=mirror&entry_id={$post['ID']}&action=show\">#{$post['ID']}</a>
             <!-- <div class=\"wall-image-label wall-image-label-creator\"> -->
-            <a href=\"?context=profile&profileId={$post['user_id']}\">~{$post['creator']}</a>
+            <a href=\"?context=profile&profile_id={$post['user_id']}\">~{$post['creator']}</a>
             <!-- </div> -->
           </div>
           <div class=\"wall-image-label wall-image-label-top-right\">{$post['stats']}</div>

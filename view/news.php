@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Announcements',
     'priority' => 2,
-    'permission' => Array('user')
+    'permission' => Array('admin', 'mod', 'user')
   );
 
   if( parse_context(__FILE__) )

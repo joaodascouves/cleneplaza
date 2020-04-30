@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Profile',
     'priority' => 1,
-    'permission' => Array('user','mod'),
+    'permission' => Array('admin', 'mod', 'user'),
     'styles' => Array('profile'),
     'align' => 'right'
   );
@@ -11,12 +11,12 @@
   if( parse_context(__FILE__) )
     return $page_info;
 
-  include 'includes/controls/user_control.php';
+  include_once 'includes/controls/user_control.php';
 
   $edit = !@strcmp('edit', $_GET['action']);
 
-  $user = ( isset($_GET['profileId']) ?
-    user_get_by_id(validate_natural_num($_GET['profileId'])) :
+  $user = ( isset($_GET['profile_id']) ?
+    user_get_by_id(validate_natural_num($_GET['profile_id'])) :
     current_user_get() );
 
   if( !$edit )

@@ -9,6 +9,7 @@
   function mirror_get_by_id($id)
   {
     return context_entry_by_id('mirrors', $id, Array(
+      Array('INET_NTOA(`ip`)', 'ip'),
       'url',
       'fullpage_path',
       'created_at'

@@ -52,6 +52,18 @@ function rpc_callback(data)
       console.log(data);
   }
 
+  if( document.getElementById('comment_form') && parsed_data.status !== 100 )
+  {
+    document.getElementById('comment_form').reset();
+    document.getElementsByName('message')[0].value = '';
+
+    if( parsed_data.status === 0 )
+    {
+      var comment_count = document.getElementById('comment-count');
+      comment_count.innerHTML = parseInt(comment_count.innerHTML) + 1;
+    }
+  }
+
   if( document.getElementById('send_file') && parsed_data.status !== 100 )
     document.getElementById('send_file').disabled = true;
 
@@ -59,66 +71,138 @@ function rpc_callback(data)
     document.getElementById('wall_image_preview').src = '/clenexyz/foto.jpg';
 }
 
-function wall_grid_insert(image)
+/**************/
+function comments_update_callback(data)
 {
-  var image_container = document.createElement('div');
-  image_container.className = 'wall-image-container';
+  var parsed_data = JSON.parse(data);
+  if( !parsed_data || parsed_data.status !== 0 )
+    return rpc_callback(data);
 
-  var image_display = document.createElement('img');
-  image_display.className = 'wall-image-file';
-  image_display.src = image.file_path;
+  var wall = document.getElementById('comments-wall-container');
+  var wall_json = parsed_data.wall;
+  if( wall_json.length<1 )
+    return;
+
+  var collection = document.getElementsByClassName('comment-container');
+  if( collection.length >= 48 )
+    wall_json.forEach(function(item, index)
+    {
+      if( collection.length>1 )
+        collection[collection.length - 1].remove();
+    });
+
+  var entries = [];
+  wall_json.forEach(function(item, index)
+  {
+    entries.push( wall_grid_insert(wall_json[index], 'comment-container post-container', 'post') );
+  });
+
+  entries.reverse();
+  for( var i=0; i<entries.length; i++ )
+    wall.insertBefore(entries[i], wall.lastChild.nextSibling);
+}
+/**************/
+
+function wall_grid_insert(image, container, image_class)
+{
+  var entry_container = document.createElement('div');
+  entry_container.className = container;
+
+
+  if( image.file_name )
+  {
+    var entry_display = document.createElement('div');
+    entry_display.className = image_class + '-file';
+
+    var entry_file = document.createElement('img');
+    entry_file.className = image_class + '-file-file';
+    entry_file.src = image.file_path;
+    entry_display.appendChild(entry_file);
+  }
+  else
+  {
+    var entry_display = document.createElement('img');
+    entry_display.className = image_class + '-file';
+    entry_display.src = image.file_path;
+  }
 
   var post_link = document.createElement('a');
-  post_link.href = '?context=' + context + '&'+ context +'Id=' + image.ID + '&action=show';
   post_link.innerHTML = "#" + image.ID;
 
+  if( !entry_id )
+    post_link.href = '?context=' + context + '&entry_id=' + image.ID + '&action=show';
+
   var profile_link = document.createElement('a');
-  profile_link.href = '?context=profile&profileId=' + image.user_id;
+  profile_link.href = '?context=profile&profile_id=' + image.user_id;
   profile_link.innerHTML = ' ~'+ image.creator;
 
-  var image_id = document.createElement('div');
-  image_id.classList.add('wall-image-label', 'wall-image-label-top-left');
-  image_id.appendChild(post_link);
-  image_id.appendChild(profile_link);
+  var entry_id = document.createElement('div');
+  entry_id.classList.add(image_class +'-label', image_class + '-label-top-left');
+  entry_id.appendChild(post_link);
+  entry_id.appendChild(profile_link);
 
   var post_stats = document.createElement('div');
-  post_stats.classList.add('wall-image-label', 'wall-image-label-top-right');
+  post_stats.classList.add(image_class +'-label', image_class + '-label-top-right');
   post_stats.innerHTML = image.stats;
 
-  var image_file_name = document.createElement('div');
-  image_file_name.classList.add('wall-image-label', 'wall-image-label-file_name');
-  image_file_name.innerHTML = image.label;
+  var entry_label = document.createElement('div');
+  entry_label.classList.add(image_class +'-label', image_class + '-label-label');
+  entry_label.innerHTML = image.label;
 
-  image_container.appendChild(image_id);
-  image_container.appendChild(image_display);
-  image_container.appendChild(image_file_name);
-  image_container.appendChild(post_stats);
+  entry_container.appendChild(entry_id);
+  entry_container.appendChild(entry_display);
 
-  return image_container;
+  if( image.file_name )
+  {
+    var entry_file_name = document.createElement('div');
+    var entry_file_link = document.createElement('a');
+
+    entry_file_name.className = image_class + '-label-file-name';
+    entry_file_link.href = image.file_path;
+    entry_file_link.innerHTML = image.file_name;
+
+    entry_file_name.appendChild(entry_file_link);
+    entry_display.appendChild(entry_file_name);
+  }
+
+  entry_container.appendChild(entry_label);
+  entry_container.appendChild(post_stats);
+
+  return entry_container;
 }
+
+var entry_id = window.location.href.match(/&entry_id=([0-9]+)/);
+
+var current_collection =
+document.getElementsByClassName(( !entry_id ?
+  'wall-image-container' :
+  'comment-container'
+));
 
 function wall_grid_get_count()
 {
-  return ( current_images ?
-    current_images.length : 0 );
+  return ( current_collection ?
+    current_collection.length : 0 );
 }
 
 function wall_grid_get_last_id()
 {
-  return ( current_images && current_images.length < 2 ?
-    0 : parseInt(current_images[1].innerHTML.split('#')[1]) );
+  var modifier = ( entry_id ? 1 : 0 );
+  return ( current_collection && current_collection.length < 2 ?
+    0 : parseInt(current_collection[1-modifier].innerHTML.split('#')[1]) );
 }
 
 function wall_grid_get_first_id()
 {
-  var last_hidden = ( current_images[current_images.length - 1].style.display == 'none' ? 2 : 1 );
+  var modifier = ( entry_id ? 1 : 0 );
+  var last_hidden = 1;
 
-  return ( current_images && current_images.length < 2  ?
-    0 : parseInt(current_images[current_images.length - last_hidden].innerHTML.split('#')[1]) );
+  if( !modifier )
+    last_hidden = ( current_collection[current_collection.length - 1].style.display === 'none' && !entry_id ? 2 : 1 );
+
+  return ( current_collection && current_collection.length < 2-modifier ?
+    0 : parseInt(current_collection[current_collection.length - last_hidden].innerHTML.split('#')[1]) );
 }
-
-var current_images =
-document.getElementsByClassName('wall-image-container');
 
 function wall_grid_pagination_update()
 {
@@ -167,10 +251,13 @@ function wall_grid_pagination_update()
 function wall_grid_update_callback(data)
 {
   var parsed_data = JSON.parse(data);
-  if( parsed_data.status != 0 )
+  if( !parsed_data || parsed_data.status !== 0 )
     return rpc_callback(data);
 
   var wall = document.getElementById('wall-container');
+  if( !wall )
+    return;
+
   var wall_json = parsed_data.wall;
   if( wall_json.length<1 )
     return;
@@ -186,11 +273,12 @@ function wall_grid_update_callback(data)
   var images = [];
   wall_json.forEach(function(item, index)
   {
-    images.push( wall_grid_insert(wall_json[index]) );
+    images.push( wall_grid_insert(wall_json[index], 'wall-image-container', 'wall-image') );
   });
 
   images.reverse();
   for( var i=0; i<images.length; i++ )
+  {
     if( !wall.firstElementChild )
       wall.appendChild(images[i]);
 
@@ -201,6 +289,7 @@ function wall_grid_update_callback(data)
       else
         wall.insertBefore(images[i], wall.firstChild);
     }
+  }
 
   if( collection.length >= 48 && document.getElementById('upload_box').style.display != 'none' )
     collection[collection.length - 1].style.display = 'none';
@@ -218,9 +307,14 @@ function wall_grid_update(offset, direction, limit)
   formdata.append('direction', direction);
   formdata.append('limit', limit);
 
-  rpc_send('api.php?context='+ context +'&action=collection_fetch', formdata, function(result){
-    wall_grid_update_callback(result);
-  });
+  if( entry_id )
+  {
+    formdata.append('entry_id', entry_id[1]);
+    formdata.append('context', context);
+  }
+
+  rpc_send('api.php?context='+ ( entry_id ? 'comment' : context ) +'&action=collection_fetch', formdata,
+    ( entry_id ? comments_update_callback : wall_grid_update_callback ));
 }
 
 function wall_image_preview_refresh(event)
@@ -261,6 +355,21 @@ function wall_image_preview_refresh(event)
   /*
     End of recursive binding.
   */
+  if( document.getElementById('comments-wall-container') )
+  {
+    document.getElementById('comment_form').action = 'api.php?context=comment&action=message_insert';
+
+    if( ['post', 'mirror'].includes(context.toLowerCase()) )
+    {
+      wall_grid_update(wall_grid_get_first_id(), 'ASC', 0);
+      setInterval(function()
+      {
+        wall_grid_update(wall_grid_get_first_id(), 'ASC', 0);
+
+      }, 3000);
+    }
+  }
+
   if( !document.getElementById('wall-container') )
     return;
 

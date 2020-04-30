@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Logout',
     'priority' => 0,
-    'permission' => Array('user'),
+    'permission' => Array('admin', 'mod', 'user'),
     'align' => 'right'
   );
 

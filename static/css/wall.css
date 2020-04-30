@@ -76,7 +76,7 @@ input[type=checkbox] {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .wall-image-label-top-right {
@@ -128,7 +128,7 @@ input[type=checkbox] {
   .wall-image-label
   {
     padding-left: 10px;
-    font-size: 11px;
+    font-size: 15px;
   }
 
   .wall-image-label-top-left {

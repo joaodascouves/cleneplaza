@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function(){
-  if( window.location.href.match(/\?context=(home|mirror|post)/) )
+  if( window.location.href.match(/\?context=(home|mirror|post).*(?<!&action=submit)$/) )
   {
     var d = new Date();
 

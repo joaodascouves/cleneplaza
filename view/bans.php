@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Last bans',
     'priority' => 4,
-    'permission' => Array('user', 'mod')
+    'permission' => Array('admin', 'mod', 'user')
   );
 
   if( parse_context(__FILE__) )

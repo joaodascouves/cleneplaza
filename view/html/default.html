@@ -47,9 +47,10 @@
     <div id="inner-container">
       {{ body.inner }}
     </div>
-    <div id="bottom-container">
-      {{ body.bottom }}
-    </div>
+    {{?
+      if( !@strcmp('home', $_GET['context']) )
+        echo get_view('bottom');
+    }}
   </div>
 </body>
 </html>

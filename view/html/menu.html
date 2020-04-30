@@ -10,7 +10,7 @@
             $align = ( !@strcmp('right', $my_page['align']) ? ' class="right-tab"' : '' );
 
             echo "<li{$align}>
-              <a href=\"{$config['siteroot']}/?context={$my_page['context']}\">${my_page['title']}</a>
+              <a href=\"?context={$my_page['context']}\">${my_page['title']}</a>
             </li>";
 
           }

@@ -27,3 +27,6 @@
   width: 99.5%;
   height: 498px;
 }
+
+@media (max-width: 480px) {
+}

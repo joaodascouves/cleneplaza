@@ -13,17 +13,17 @@
     global $conn;
 
     if( @empty($parameters['username']) || @empty($parameters['password']) )
-      return get_view('login.form', [
+      return get_view('login.form', Array(
         'error' => 'Please fill in all the fields.'
-      ]);
+      ));
 
-    $query = mysqli_query($conn, sprintf("SELECT * FROM `cl_users`
+    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_users`
       WHERE `email`='%s' AND `password`=MD5(CONCAT('%s', '%s'))",
       $parameters['username'], $parameters['password'], $config['salt']));
 
-    if( mysqli_num_rows($query)>0 )
+    if( @mysqli_num_rows($query)>0 )
     {
-      $_SESSION['user'] = mysqli_fetch_assoc($query);
+      $_SESSION['user_id'] = mysqli_fetch_array($query)[0];
       return header('Location: /clene2/');
     }
     else {

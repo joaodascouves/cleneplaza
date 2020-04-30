@@ -1,5 +1,27 @@
 <?php
 
+  function comment_get_count_by_id($context, $id)
+  {
+    global $conn;
+
+    $query = mysqli_query($conn, sprintf("SELECT `ID`, `file_path` FROM `cl_comments`
+      WHERE `context`='%s' AND `entry_id`=%d", $context, $id));
+
+    $result = Array(0, 0);
+    if( $query || mysqli_num_rows($query)>0 )
+    {
+      while( ($row = mysqli_fetch_assoc($query)) )
+      {
+        $result[0]++;
+
+        if( !@empty($row['file_path']) )
+          $result[1]++;
+      }
+    }
+
+    return $result;
+  }
+
   /*
     Returns a collection of comments.
 
@@ -7,13 +29,29 @@
     @parameter Integer $post_id
     @return Array
   */
-  function comment_collection_fetch($parameters, $post_id)
+  function comment_collection_fetch($parameters)
   {
+    if( @empty($parameters['entry_id']) )
+      return Array(
+        'status' => 51,
+        'message'=> 'Entry ID not set.'
+      );
+
+    if( @empty($parameters['context']) )
+      return Array(
+        'status' => 52,
+        'message'=> 'Context not set.'
+      );
+
     return collection_fetch($parameters, 'comments', Array(
+      'file_name',
       'file_path',
-      'body',
-      'created_at'
-    ), Array("`entry_id`={$post_id}"));
+      Array('REPLACE(`c`.`body`, \'\n\', \'<br/>\')', 'label'),
+      Array('`c`.`created_at`', 'stats')
+    ), Array(
+      sprintf("`c`.`entry_id`= %d", $parameters['entry_id']),
+      sprintf("`c`.`context`= '%s'", $parameters['context'])
+    ));
   }
 
   /*
@@ -39,7 +77,7 @@
         'message'=> 'Invalid context.'
       );
 
-    if( @strlen(($message = $parameters['message']))<5 && @empty($parameters['image_file']['name']) )
+    if( @strlen(trim(($message = $parameters['message'])))<5 && @empty($parameters['image_file']['name']) )
       return Array(
         'status' => $error++,
         'message'=> 'Message body too short (min. 5 characters).'

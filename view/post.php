@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Post',
     'priority' => -1,
-    'permission' => Array('user'),
+    'permission' => Array('admin', 'mod', 'user'),
     'styles' => Array('post')
   );
 
@@ -28,6 +28,6 @@
   {
     echo make_page(Array(
       'body.inner' => get_view('post.display',
-        post_get_by_id(validate_natural_num($_GET['postId'])))
+        post_get_by_id(validate_natural_num($_GET['entry_id'])))
     ));
   }

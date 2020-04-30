@@ -1,7 +1,14 @@
 <div class="post-container post-container-main mirror-content">
-  {{ url }}<br/>
+  <div style="display: inline-block; margin-right: 20px">
+    URL: {{ url }}
+  </div>
+  <div style="display: inline-block">
+    IP: {{ ip }}
+  </div>
+  <br/>
+
   <small>
-    Uploaded by <a href="?context=profile&profileId={{ user_id }}">{{ creator }}</a> at {{ created_at }}
+    Uploaded by <a href="?context=profile&profile_id={{ user_id }}">{{ creator }}</a> at {{ created_at }}
   </small>
 
   <div class="mirror-iframe">

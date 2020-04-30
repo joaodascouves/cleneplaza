@@ -1,8 +1,8 @@
-<div class="post-container">
+<div class="post-container" id="comment-box-container">
   <dl class="list-form">
-    <form action="api.php?context=comment&action=message_insert" method="POST" name="comment_form">
+    <form action="?context=comment" method="POST" enctype="multipart/form-data" id="comment_form">
       <input type="hidden" name="context" value="{{? echo $_GET['context']; }}" />
-      <input type="hidden" name="entry_id" value="{{? echo $_GET["{$_GET['context']}Id"]; }}" />
+      <input type="hidden" name="entry_id" value="{{? echo $_GET['entry_id']; }}" />
       <dt>
         Message
       </dt>
@@ -10,7 +10,7 @@
         <textarea name="message" cols="55" rows="10" form="comment_form"></textarea>
       </dd>
       <dd>
-        <input type="file" name="image_file" />
+        <input type="file" name="image_file" accept="image/*" />
       </dd>
       <dd>
         <input type="submit" value="Submit" />

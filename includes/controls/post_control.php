@@ -1,5 +1,7 @@
   <?php
 
+  include 'comment_control.php';
+
   /*
     Alias for context_entry_by_id (includes/controls/core.php).
 
@@ -12,7 +14,8 @@
       'file_path',
       'file_name',
       'created_at',
-      Array('`c`.`body`', 'body')
+      Array('REPLACE(`c`.`body`, \'\n\', \'<br/>\')', 'body'),
+      Array('IFNULL(TRIM(`c`.`title`), `c`.`file_name`)', 'title')
     ));
   }
 
@@ -24,14 +27,22 @@
   */
   function post_collection_fetch($parameters)
   {
-    return collection_fetch($parameters, 'posts', Array(
+    $collection = collection_fetch($parameters, 'posts', Array(
       'file_path',
-      Array('`c`.`file_name`', 'label'),
+      Array('IFNULL(TRIM(`c`.`title`), `c`.`file_name`)', 'label'),
       Array(
         "IFNULL((LENGTH(TRIM(`c`.`body`)) - LENGTH(REPLACE(TRIM(`c`.`body`), ' ', '')))+ROUND(LENGTH(TRIM(`c`.`body`))/LENGTH(TRIM(`c`.`body`))), 0)",
         'stats'
         )
     ));
+
+    foreach( $collection['wall'] as &$item )
+    {
+      $comments = comment_get_count_by_id('post', $item['ID']);
+      $item['stats'] = sprintf("(W:%d|R:%d|I:%d)", $item['stats'], $comments[0], $comments[1]);
+    }
+
+    return $collection;
   }
 
   /*
@@ -46,10 +57,24 @@
     global $config;
     global $conn;
 
+    $error = 1;
+
     if( @empty($parameters['image_file']['name']) )
       return Array(
-        'status' => 6,
+        'status' => $error++,
         'message'=> 'Image filename can not be empty.'
+      );
+
+    if( @strlen(trim(($message = $parameters['message'])))>65535 )
+      return Array(
+        'status' => $error++,
+        'message'=> 'Message can not be larger than 65535 characters.'
+      );
+
+    if( @strlen((trim($title = $parameters['title'])))>60 )
+      return Array(
+        'status' => $error++,
+        'message'=> 'Title can not be larger than 60 characters.'
       );
 
     if( @is_array(($flood_msg = anti_flood_step('posts'))) )
@@ -60,20 +85,19 @@
     if( $upload_result['status'] !== 0 )
       return $upload_result;
 
-    $message = ( !@empty($parameters['message']) ? $parameters['message'] : '');
-
-    $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_name`, `file_sum`, `body`)
-      VALUES ('%d', '%s', '%s', '%s', '%s')",
+    $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_name`, `file_sum`, `title`, `body`)
+      VALUES ('%d', '%s', '%s', '%s', %s, %s)",
       current_user_get()['ID'],
       $upload_result['path'],
       $upload_result['name'],
       $upload_result['sum'],
-      $message)
-    );
+      ( !@empty($title) ? "'{$title}'" : 'NULL'),
+      ( !@empty($message) ? "'{$message}'" : 'NULL')
+    ));
 
     if( (!$query || !mysqli_affected_rows($conn)) )
       return Array(
-        'status' => 5,
+        'status' => $error++,
         'message'=> 'Couldn\'t insert row in database.'
       );
 

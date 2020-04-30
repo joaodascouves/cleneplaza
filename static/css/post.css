@@ -3,20 +3,67 @@
   float: left;
   clear: left;
   background: var(--secondary-bg-color);
-  max-width: 94.5%;
-  padding: 10px;
+  max-width: 74.5%;
+  min-width: 30%;
+  padding: 10px 10px 0 10px;
   margin-bottom: 10px;
   border: 1px solid black;
+  font-size: 14px;
+
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+#comment-prelude {
+   display: inline-block;
+   width: 100%;
+   margin-bottom: 20px;
+   font-size: 15px;
+}
+
+.comment-container {
+  position: relative;
 }
 
 .post-container-main {
-  margin-bottom: 50px;
+  /* margin-bottom: 30px; */
 }
 
-.post-image-container
+.comment-box-container {
+  padding-top: 0px;
+}
+
+.post-title {
+  font-size: 15px;
+}
+
+.post-file
 {
-  width: 300px;
-  padding: 10px 0 10px 0;
+  position: relative;
+  padding: 30px 5px 10px 10px;
+}
+
+.post-file-file
+{
+  max-width: 350px;
+}
+
+.post-label-top-left {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.post-label-top-right {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 12px;
+}
+
+.post-label-label {
+  padding-bottom: 10px;
+  font-size: 13px;
 }
 
 p {
@@ -25,7 +72,24 @@ p {
 }
 
 @media (max-width: 480px) {
-  #post-container {
-    width: 89.5%;
+  .post-container-main {
+    max-width: 92.5%;
+  }
+
+  .post-container {
+    min-width: 92.5%;
+    font-size: 11px;
+  }
+
+  .post-file-file {
+    max-width: 300px;
+  }
+
+  .post-label-top-left {
+    font-size: 15px;
+  }
+
+  .post-label-top-right {
+    font-size: 10px;
   }
 }

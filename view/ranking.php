@@ -3,7 +3,7 @@
   static $page_info = Array(
     'title' => 'Ranking',
     'priority' => 0,
-    'permission' => Array('user', 'mod')
+    'permission' => Array('admin', 'mod', 'user')
   );
 
   if( parse_context(__FILE__) )

@@ -62,9 +62,9 @@
           $parameters['about'],
           ( @is_array($upload_result) ?
             sprintf(", file_path='%s', file_name='%s', file_sum='%s'",
-              $upload_result[0],
-              $upload_result[1],
-              $upload_result[2]
+              $upload_result['path'],
+              $upload_result['name'],
+              $upload_result['sum']
               ) : ''
           ),
           $id)
