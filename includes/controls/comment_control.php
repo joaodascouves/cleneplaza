@@ -1,5 +1,13 @@
 <?php
 
+  /*
+    Returns number of comments and comments with images of entry ID
+    in specified context.
+
+    @parameter String $context
+    @parameter Integer $id
+    @return Array
+  */
   function comment_get_count_by_id($context, $id)
   {
     global $conn;
