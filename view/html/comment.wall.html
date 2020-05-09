@@ -4,11 +4,13 @@
   $context = ( !@empty($_GET['context']) ? $_GET['context'] : false );
   $entry_id = (!@empty($_GET['entry_id'])? $_GET['entry_id'] : false );
 }}
-<div id="comment-prelude">
-  Replies: <div id="comment-count" style="display: inline">{{? echo comment_get_count_by_id($context, $entry_id)[0]; }}</div>
-</div>
 <div id="comments-wall-container">
-{{?
+  <div id="comment-prelude">
+    Replies: <div id="comment-count" style="display: inline">{{?
+      echo ( no_script() ? comment_get_count_by_id($context, $entry_id)[0] : '0');
+    }}</div>
+  </div>
+{{? //<?php
 
   if( no_script() && $context && $entry_id )
   {
@@ -26,6 +28,25 @@
 
       foreach( $comment_collection as $comment )
       {
+
+        $opts_str = '';
+
+        if( @is_array($comment['opts']) )
+        {
+          $opts_str = '(';
+          $index = 0;
+
+          foreach( $comment['opts'] as $name => $action )
+          {
+            $opts_str .= "<a href=\"?context=moderate&object=comments&entry_id={$comment['ID']}&action={$action}\">{$name}</a>";
+
+            if( ++$index < sizeof($comment['opts']) )
+              $opts_str .= '|';
+          }
+
+          $opts_str .= ')';
+        }
+
         $post_file = ( !@empty($comment['file_path']) ?
 
           "<div class=\"post-file\">
@@ -35,22 +56,25 @@
             </div>
           </div>" : '<br/><br/>');
 
+        $label = ( !@empty($comment['label']) ?
+          "<div class=\"post-label post-label-label\">
+            {$comment['label']}
+          </div>" : '');
+
         echo "<div class=\"comment-container post-container\">
           <div class=\"post-label post-label-top-left\">
             <a>#{$comment['ID']}</a>
             <a href=\"?context=profile&profile_id={$comment['user_id']}\"> ~{$comment['creator']}</a>
           </div>
           {$post_file}
-          <div class=\"post-label post-label-label\">
-            {$comment['label']}
-          </div>
+          {$label}
           <div class=\"post-label post-label-top-right\">
-            {$comment['stats']}
+            {$comment['stats']}{$opts_str}
           </div>
         </div>";
       }
     }
   }
 
-}}
+//?>}}
 </div>

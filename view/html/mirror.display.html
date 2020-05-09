@@ -5,6 +5,27 @@
   <div style="display: inline-block">
     IP: {{ ip }}
   </div>
+  <div class="top-right">
+{{? //<?php
+
+  if( isset($opts) )
+  {
+    echo '(';
+    $index = 0;
+
+    foreach( $opts as $name => $action )
+    {
+      echo "<a href=\"?context=moderate&object=mirrors&entry_id={$_GET['entry_id']}&action={$action}\">{$action}</a>";
+
+      if( ++$index < sizeof($opts) )
+        echo '|';
+    }
+
+    echo ')';
+  }
+
+//?>}}
+  </div>
   <br/>
 
   <small>

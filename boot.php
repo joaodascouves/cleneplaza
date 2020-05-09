@@ -9,7 +9,9 @@
 
   if( file_exists("./view/{$context}.php") )
   {
-    session_start();
+    if( !@isset($_SESSION) )
+      session_start();
+      
     setcookie('noscript', ( no_script() ? 'true' : 'false' ), time()+3600, '/');
 
 

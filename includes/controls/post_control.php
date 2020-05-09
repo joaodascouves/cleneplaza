@@ -1,6 +1,7 @@
   <?php
 
   include 'comment_control.php';
+  include 'saloon_control.php';
 
   /*
     Alias for context_entry_by_id (includes/controls/core.php).
@@ -34,6 +35,8 @@
         "IFNULL((LENGTH(TRIM(`c`.`body`)) - LENGTH(REPLACE(TRIM(`c`.`body`), ' ', '')))+ROUND(LENGTH(TRIM(`c`.`body`))/LENGTH(TRIM(`c`.`body`))), 0)",
         'stats'
         )
+    ), Array(
+      sprintf("`c`.`saloon`='%s'", $parameters['saloon'])
     ));
 
     foreach( $collection['wall'] as &$item )
@@ -59,19 +62,37 @@
 
     $error = 1;
 
+    if( @empty(($saloon_alias = trim($parameters['saloon']))) )
+      return Array(
+        'status' => $error++,
+        'message'=> 'Saloon name can not be empty.'
+      );
+
+    $saloon_list = saloons_get();
+    $saloon_list_alias = Array();
+
+    foreach( $saloon_list as $saloon )
+      array_push($saloon_list_alias, $saloon['alias']);
+
+    if( !@in_array($saloon_alias, $saloon_list_alias) )
+      return Array(
+        'status' => $error++,
+        'message'=> 'Inexistent saloon.'
+      );
+
     if( @empty($parameters['image_file']['name']) )
       return Array(
         'status' => $error++,
         'message'=> 'Image filename can not be empty.'
       );
 
-    if( @strlen(trim(($message = $parameters['message'])))>65535 )
+    if( @strlen(($message = trim($parameters['message'])))>65535 )
       return Array(
         'status' => $error++,
         'message'=> 'Message can not be larger than 65535 characters.'
       );
 
-    if( @strlen((trim($title = $parameters['title'])))>60 )
+    if( @strlen(($title = trim($parameters['title'])))>60 )
       return Array(
         'status' => $error++,
         'message'=> 'Title can not be larger than 60 characters.'
@@ -85,9 +106,10 @@
     if( $upload_result['status'] !== 0 )
       return $upload_result;
 
-    $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `file_path`, `file_name`, `file_sum`, `title`, `body`)
-      VALUES ('%d', '%s', '%s', '%s', %s, %s)",
+    $query = mysqli_query($conn, sprintf("INSERT INTO `cl_posts` (`user_id`, `saloon`, `file_path`, `file_name`, `file_sum`, `title`, `body`)
+      VALUES ('%d', '%s', '%s', '%s', '%s', %s, %s)",
       current_user_get()['ID'],
+      $saloon_alias,
       $upload_result['path'],
       $upload_result['name'],
       $upload_result['sum'],
@@ -103,6 +125,6 @@
 
     return Array(
       'status' => 0,
-      'message'=> 'Image posted with ID '. mysqli_insert_id($conn)
+      'message'=> 'Image posted with ID '. mysqli_insert_id($conn) .'.'
     );
   }

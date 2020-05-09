@@ -7,7 +7,7 @@
     'styles' => Array('post')
   );
 
-  if( parse_context(__FILE__) )
+  if( context_parse(__FILE__) )
     return $page_info;
 
   include 'includes/controls/post_control.php';
@@ -24,10 +24,9 @@
     ));
   }
 
-  else if( !strcmp('show', $action) )
+  else if( !strcmp('show', $action) && ($entry_id = @validate_natural_num($_GET['entry_id']))>0 )
   {
     echo make_page(Array(
-      'body.inner' => get_view('post.display',
-        post_get_by_id(validate_natural_num($_GET['entry_id'])))
+      'body.inner' => get_view('post.display', post_get_by_id($entry_id))
     ));
   }

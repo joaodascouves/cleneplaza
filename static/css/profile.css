@@ -1,15 +1,25 @@
-#profile-container img.profile-image {
-  width: 300px;
+#profile-container {
+  padding-left: 5px;
 }
 
 #profile-container p.about {
-  max-width: 90%;
+  max-width: 74.5%;
   padding: 5px;
   word-wrap: break-word;
   word-break: break-all;
   background: var(--secondary-bg-color);
   border: 1px solid black;
+  border-radius: 10px;
   display: inline-block;
+}
+
+.profile-file {
+  padding-left: 10px;
+}
+
+.profile-file-file {
+  max-height: 250px;
+  object-fit: cover;
 }
 
 /* .display-table {
@@ -35,3 +45,9 @@
   background: var(--secondary-bg-color);
   border: 1px solid black;
 } */
+
+@media (max-width: 480px) {
+  #profile-container p.about {
+    max-width: 93%;
+  }
+}

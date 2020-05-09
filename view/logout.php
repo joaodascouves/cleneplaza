@@ -7,7 +7,7 @@
     'align' => 'right'
   );
 
-  if( parse_context(__FILE__) )
+  if( context_parse(__FILE__) )
     return $page_info;
 
   session_destroy();

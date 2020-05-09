@@ -13,7 +13,7 @@
     global $conn;
 
     $query = mysqli_query($conn, sprintf("SELECT `ID`, `file_path` FROM `cl_comments`
-      WHERE `context`='%s' AND `entry_id`=%d", $context, $id));
+      WHERE `context`='%s' AND `status`!='rejected' AND `entry_id`=%d", $context, intval($id)));
 
     $result = Array(0, 0);
     if( $query || mysqli_num_rows($query)>0 )
@@ -51,15 +51,17 @@
         'message'=> 'Context not set.'
       );
 
-    return collection_fetch($parameters, 'comments', Array(
+    $collection = collection_fetch($parameters, 'comments', Array(
       'file_name',
       'file_path',
       Array('REPLACE(`c`.`body`, \'\n\', \'<br/>\')', 'label'),
       Array('`c`.`created_at`', 'stats')
     ), Array(
-      sprintf("`c`.`entry_id`= %d", $parameters['entry_id']),
+      sprintf("`c`.`entry_id`= %d", intval($parameters['entry_id'])),
       sprintf("`c`.`context`= '%s'", $parameters['context'])
     ));
+
+    return $collection;
   }
 
   /*
@@ -94,7 +96,7 @@
     if( @is_array(($flood_msg = anti_flood_step('comments'))) )
       return $flood_msg;
 
-    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_%ss` WHERE `ID`=%d", $context, ($entry_id = $parameters['entry_id'])));
+    $query = mysqli_query($conn, sprintf("SELECT `ID` FROM `cl_%ss` WHERE `ID`=%d", $context, ($entry_id = intval($parameters['entry_id']))));
     if( !$query || mysqli_num_rows($query)<1 )
       return Array(
         'status' => $error++,

@@ -15,6 +15,16 @@
 
           }
         }}
+        {{?
+
+          if( @validate_natural_num($_SESSION['user_id'])>0 )
+          {
+            echo "<li class=\"right-tab\">
+              <a>700 ¢¢</a>
+            </li>";
+          }
+
+        }}
     </ul>
   </nav>
 </div>

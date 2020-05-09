@@ -39,6 +39,13 @@
     }
   }
 
+  $result = user_sanitize();
+  if( $result['status']<0 )
+  {
+    echo $encoding_function(raise_error($result['status'], $result['message']));
+    exit;
+  }
+
   if( !@empty($context = $_GET['context']) && !@empty($action = $_GET['action']) )
   {
     $control_file = "includes/controls/{$context}_control.php";
@@ -46,13 +53,15 @@
 
     if( file_exists($control_file) )
     {
-      include $control_file;
+      include_once $control_file;
 
       if( api_action_exists($action_name) && function_exists($action_name) )
       {
         if( in_array($_SERVER['REQUEST_METHOD'], $__api_actions[$action_name][1]) )
         {
-          session_start();
+          if( !isset($_SESSION) )
+            session_start();
+
           echo $encoding_function($action_name(array_merge($_POST, $_FILES)));
         }
         else

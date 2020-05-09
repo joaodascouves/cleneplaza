@@ -36,7 +36,7 @@
       }
     }}
   <div id="center-modal">
-    <a class="modal-close" href="#" onclick="parentNode.style.display='none'">Close (×)</a>
+    <a class="modal-close" href="#/" onclick="parentNode.style.display='none'">Close (×)</a>
   </div>
   <div id="page-container">
     <div id="top-container">
@@ -48,7 +48,7 @@
       {{ body.inner }}
     </div>
     {{?
-      if( !@strcmp('home', $_GET['context']) )
+      if( @in_array($_GET['context'], Array('home', 'mirror')) && !isset($_GET['entry_id']) )
         echo get_view('bottom');
     }}
   </div>

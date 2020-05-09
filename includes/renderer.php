@@ -6,59 +6,52 @@ include 'controls/core.php';
   Processes HTML replacing double brackets with array data, or
   evaluement, then return it.
 
-  @parameter String $page
-  @paramter Array $replacements
+  @parameter String $_page
+  @paramter Array $_replacements
   @return String
 */
-function inject_content($page, $replacements = Array())
+function inject_content($_page, $_replacements = Array())
 {
-  if( is_array($replacements) )
-  foreach( $replacements as $name => $object )
+  if( is_array($_replacements) )
+  foreach( $_replacements as $_name => $_object )
   {
-    if( is_array($object) )
+    if( is_array($_object) )
     {
-      foreach( $object as $key => $value )
-      {
-        $delimiter = ( is_string($value) ? "'" : '' );
+      eval(sprintf("$%s = unserialize(base64_decode('%s'));",
 
-        eval(sprintf("$%s['%s'] = %s%s%s;",
-          str_replace('.', '_', $name),
-          secure_str($key),
-          $delimiter,
-          secure_str($value),
-          $delimiter
-        ));
-      }
+        str_replace('.', '_', $_name),
+        base64_encode(serialize($_object))
+      ));
 
-      unset($replacements[$name]);
+      unset($_replacements[$_name]);
     }
   }
 
-  if( preg_match_all('/\{{2}\?*[ ]*(.*?)[ ]*\}{2}/s', $page, $matches) )
+  if( preg_match_all('/\{{2}\?*[ ]*(.*?)[ ]*\}{2}/s', $_page, $_matches) )
   {
-    foreach( $matches[1] as $index => $var )
+    foreach( $_matches[1] as $_index => $_var )
     {
-      if( strpos($matches[0][$index], '{{?') === 0 )
+      if( strpos($_matches[0][$_index], '{{?') === 0 )
       {
         ob_start();
-        eval($var);
-        $value = ob_get_contents();
+        eval($_var);
+        $_value = ob_get_contents();
         ob_end_clean();
       }
       else
       {
-        if( isset($replacements[$var]) )
-          $value = $replacements[$var];
+        if( isset($_replacements[$_var]) )
+          $_value = $_replacements[$_var];
         else
-          $value = '';
+          $_value = '';
       }
 
-      if ( isset($value) )
-        $page = str_replace($matches[0][$index], $value, $page);
+      if ( isset($_value) )
+        $_page = str_replace($_matches[0][$_index], $_value, $_page);
     }
   }
 
-  return trim($page);
+  return trim($_page);
 }
 
 /*
@@ -69,12 +62,29 @@ function inject_content($page, $replacements = Array())
   @parameter String $path
   @return Boolean
 */
-function parse_context($path)
+function context_parse($path)
 {
   global $page_info;
 
   if( !@in_array(current_user_privilege(), $page_info['permission']) )
     exit;
+
+  if( !@in_array('guest', $page_info['permission']) )
+  {
+    $result = user_sanitize();
+    if( $result['status'] < 0 )
+    {
+      if( $result['redirect'] )
+      {
+        if( $_SESSION )
+          session_destroy();
+
+        header("Location: {$result['redirect']}");
+      }
+
+      return true;
+    }
+  }
 
   preg_match('/\/([^\/]+)(?=\.php)/', $path, $match);
   if( @strcmp($_GET['context'], $match[1]) )
@@ -94,7 +104,9 @@ function parse_context($path)
 function get_view($name, $parameters = Array())
 {
   global $config;
-  return inject_content(@file_get_contents("{$config['siteroot']}/view/html/{$name}.html"), $parameters);
+
+  if( file_exists(($path = "{$config['siteroot']}/view/html/{$name}.html")) )
+    return inject_content(@file_get_contents($path), $parameters);
 }
 
 /*
@@ -116,7 +128,7 @@ function make_menu()
   {
     $has_permission = true;
 
-    if( ($context = parse_context($page)) )
+    if( ($context = context_parse($page)) )
       $page_info = include_once($page);
 
     else
@@ -179,3 +191,25 @@ function make_page($replacements, $with_menu=true, $with_banner=true, $with_bott
 
   return get_view('default', $replacements + $options);
 }
+
+function output_compress($buffer)
+{
+  $search = Array(
+    '/\>[^\S ]+/s',
+    '/[^\S ]+\</s',
+    '/(\s)+/s',
+    '/<!--(.|\s)*?-->/'
+  );
+
+  $replace = Array(
+    '>',
+    '<',
+    '\\1',
+    ''
+  );
+
+  $buffer = preg_replace($search, $replace, $buffer);
+  return $buffer;
+}
+
+ob_start('output_compress');

@@ -1,3 +1,17 @@
+var old_title = document.title;
+var old_count = 0;
+var current_count = 0;
+
+var comment_count = document.getElementById('comment-count');
+
+document.addEventListener('visibilitychange', function(event){
+  if( document.visibilityState === 'visible' )
+  {
+    document.title = old_title;
+    old_count = current_count;
+  }
+});
+
 function rpc_bind(item, formdata)
 {
   if( ['input', 'textarea'].includes(item.tagName.toLowerCase()) )
@@ -11,7 +25,7 @@ var rpc_oncourse = false;
 function rpc_send(action, data, callback)
 {
   if( rpc_oncourse === true )
-    return;
+    return false;
 
   rpc_oncourse = true;
 
@@ -30,38 +44,34 @@ function rpc_send(action, data, callback)
   return false;
 }
 
+function modal_display(message)
+{
+  var center_modal = document.getElementById('center-modal');
+  if( center_modal )
+  {
+    var span = ( document.getElementById('modal-span') ?
+      document.getElementById('modal-span') : document.createElement('span') );
+
+    span.id = 'modal-span';
+    span.innerHTML = message;
+
+    center_modal.appendChild(span);
+    center_modal.style.display = 'inherit';
+  }
+  else
+    console.log(data);
+}
+
 function rpc_callback(data)
 {
   var parsed_data = JSON.parse(data);
   if( parsed_data.status )
-  {
-    var center_modal = document.getElementById('center-modal');
-    if( center_modal )
-    {
-      var span = ( document.getElementById('modal-span') ?
-        document.getElementById('modal-span') : document.createElement('span') );
-
-      span.id = 'modal-span';
-      span.innerHTML = parsed_data.message;
-
-      center_modal.appendChild(span);
-      center_modal.style.display = 'inherit';
-    }
-
-    else
-      console.log(data);
-  }
+    modal_display(parsed_data.message);
 
   if( document.getElementById('comment_form') && parsed_data.status !== 100 )
   {
     document.getElementById('comment_form').reset();
     document.getElementsByName('message')[0].value = '';
-
-    if( parsed_data.status === 0 )
-    {
-      var comment_count = document.getElementById('comment-count');
-      comment_count.innerHTML = parseInt(comment_count.innerHTML) + 1;
-    }
   }
 
   if( document.getElementById('send_file') && parsed_data.status !== 100 )
@@ -98,10 +108,55 @@ function comments_update_callback(data)
   });
 
   entries.reverse();
+
   for( var i=0; i<entries.length; i++ )
+  {
     wall.insertBefore(entries[i], wall.lastChild.nextSibling);
+
+    if( comment_count )
+      comment_count.innerHTML = parseInt(comment_count.innerHTML) + 1;
+  }
+
+  if( !document.hasFocus() )
+  {
+    current_count = parseInt(comment_count.innerHTML);
+
+    if( old_count === 0 )
+      old_count = ( current_count === 0 ? 2 : 1 ) - 1;
+
+    document.title = '('+ parseInt(current_count - old_count) +') ' + old_title;
+  }
 }
 /**************/
+
+function moderate(action, id, object, modal)
+{
+  var formdata = new FormData();
+  var target = ( entry_id ? 'comment' : context );
+
+  formdata.append('object', target + 's');
+  formdata.append('action', action);
+  formdata.append('entry_id', id);
+
+  rpc_send('api.php?context=moderate&action=action', formdata, function(data){
+
+    var parsed_data = JSON.parse(data);
+    if( modal )
+      modal_display(parsed_data.message);
+
+    if( parsed_data.status === 0 )
+    {
+      switch( action )
+      {
+        case 'delete':
+        // object.style.visibility = 'hidden';
+        object.style.display = 'none';
+        break;
+      }
+    }
+
+  });
+}
 
 function wall_grid_insert(image, container, image_class)
 {
@@ -145,9 +200,36 @@ function wall_grid_insert(image, container, image_class)
   post_stats.classList.add(image_class +'-label', image_class + '-label-top-right');
   post_stats.innerHTML = image.stats;
 
-  var entry_label = document.createElement('div');
-  entry_label.classList.add(image_class +'-label', image_class + '-label-label');
-  entry_label.innerHTML = image.label;
+  if( image.opts )
+  {
+    post_stats.innerHTML += '(';
+
+    var index = 0;
+    var num_opts = Object.values(image.opts).length;
+
+    for( key in image.opts )
+    {
+      var link = document.createElement('a');
+      link.innerHTML = key;
+      link.href = '#/';
+      link.setAttribute('onclick', 'javascript:moderate("'+ image.opts[key] +'",'+ image.ID +', this.parentNode.parentNode, true)');
+      link.setAttribute('oncontextmenu', 'javascript:moderate("'+ image.opts[key] +'",'+ image.ID +', this.parentNode.parentNode, false); return false');
+
+      post_stats.appendChild(link);
+
+      if( ++index < num_opts )
+        post_stats.innerHTML += '|';
+    }
+
+    post_stats.innerHTML += ')';
+  }
+
+  if( image.label && image.label !== '' )
+  {
+    var entry_label = document.createElement('div');
+    entry_label.classList.add(image_class +'-label', image_class + '-label-label');
+    entry_label.innerHTML = image.label;
+  }
 
   entry_container.appendChild(entry_id);
   entry_container.appendChild(entry_display);
@@ -165,7 +247,9 @@ function wall_grid_insert(image, container, image_class)
     entry_display.appendChild(entry_file_name);
   }
 
-  entry_container.appendChild(entry_label);
+  if( image.label && image.label !== '' )
+    entry_container.appendChild(entry_label);
+
   entry_container.appendChild(post_stats);
 
   return entry_container;
@@ -263,7 +347,7 @@ function wall_grid_update_callback(data)
     return;
 
   var collection = document.getElementsByClassName('wall-image-container');
-  if( collection.length >= 48 )
+  if( collection.length > 48 )
     wall_json.forEach(function(item, index)
     {
       if( collection.length>1 )
@@ -294,6 +378,16 @@ function wall_grid_update_callback(data)
   if( collection.length >= 48 && document.getElementById('upload_box').style.display != 'none' )
     collection[collection.length - 1].style.display = 'none';
 
+  if( !document.hasFocus() )
+  {
+    current_count += images.length;
+
+    if( old_count === 0 )
+      old_count = (current_count - images.length) - ( current_count === images.length ? 1 : 0 );
+
+    document.title = '('+ parseInt(current_count - old_count - 1) +') ' + old_title;
+  }
+
   wall_grid_pagination_update();
 }
 
@@ -311,6 +405,11 @@ function wall_grid_update(offset, direction, limit)
   {
     formdata.append('entry_id', entry_id[1]);
     formdata.append('context', context);
+  }
+
+  if( context === 'post' && !entry_id )
+  {
+    formdata.append('saloon', saloon);
   }
 
   rpc_send('api.php?context='+ ( entry_id ? 'comment' : context ) +'&action=collection_fetch', formdata,
@@ -343,13 +442,16 @@ function wall_image_preview_refresh(event)
   }
 
   Array.from(document.getElementsByTagName('form')).forEach(function(item, index){
-    item.onsubmit = function(){
-      var formdata = new FormData();
-      Array.from(item.children).forEach(function(item, index){
-        recursive_bind(item, formdata);
-      });
+    if( item.method !== 'get' )
+    {
+      item.onsubmit = function(){
+        var formdata = new FormData();
+        Array.from(item.children).forEach(function(item, index){
+          recursive_bind(item, formdata);
+        });
 
-      return rpc_send(item.action, formdata, rpc_callback);
+        return rpc_send(item.action, formdata, rpc_callback);
+      }
     }
   });
   /*
@@ -377,7 +479,8 @@ function wall_image_preview_refresh(event)
     if( event.target.checked )
     {
       if( !window.location.href.match(/&sync=true/) )
-        location.href = '?context='+ (context === 'post' ? 'home' : context) +'&sync=true';
+        location.href = '?context='+ (context === 'post' ? 'home' : context) +
+        ( saloon && saloon.length>0 ? '&saloon=' + saloon : '' )+ '&sync=true';
     }
     else
       location.href = '?context='+ (context === 'post' ? 'home' : context) +'&sync=false';

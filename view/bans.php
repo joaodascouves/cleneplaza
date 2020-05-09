@@ -6,9 +6,9 @@
     'permission' => Array('admin', 'mod', 'user')
   );
 
-  if( parse_context(__FILE__) )
+  if( context_parse(__FILE__) )
     return $page_info;
 
   echo make_page(Array(
-    'body.inner' => 'Here you see the last banned fellows'
+    'body.inner' => 'Here you can see the last banned fellows.'
   ));

@@ -1,5 +1,7 @@
 <?php
 
+  include 'comment_control.php';
+
   /*
     Alias for context_entry_by_id (includes/controls/core.php).
 
@@ -24,11 +26,19 @@
   */
   function mirror_collection_fetch($parameters)
   {
-    return collection_fetch($parameters, 'mirrors', Array(
+    $collection = collection_fetch($parameters, 'mirrors', Array(
       Array('`c`.`url`', 'label'),
       Array('`c`.`preview_path`', 'file_path'),
-      Array('`c`.`flags`', 'stats')
+      Array('`c`.`views`', 'stats')
     ));
+
+    foreach( $collection['wall'] as &$item )
+    {
+      $comments = comment_get_count_by_id('mirror', $item['ID']);
+      $item['stats'] = sprintf("(V:%d|R:%d|I:%d)", $item['stats'], $comments[0], $comments[1]);
+    }
+
+    return $collection;
   }
 
   /*
@@ -39,13 +49,13 @@
   {
     if( @empty($url) )
       return Array(
-        'status' => $error++,
+        'status' => 1,
         'message'=> 'URL is not present.'
       );
 
     if( !filter_var($url, FILTER_VALIDATE_URL, FILTER_SCHEME_REQUIRED) )
       return Array(
-        'status' => $error++,
+        'status' => 2,
         'message'=> 'Malformed URL.'
       );
   }
@@ -53,10 +63,10 @@
   /*
     Fetchs an URL then check if specified code is present.
 
-    @parameter String $url
+    @parameter Array $parameters
     @return Array
   */
-  function mirror_check_and_insert($url)
+  function mirror_check_and_insert($parameters)
   {
     // $config['timeout']
     global $config;
@@ -64,7 +74,7 @@
 
     $error = 1;
 
-    if( @is_array($url_error = @mirror_url_filter($url)) )
+    if( @is_array($url_error = @mirror_url_filter(($url = trim($parameters['url']))) ) )
       return Array(
         'status' => 50 + $url_error['status'],
         'message'=> $url_error['message']

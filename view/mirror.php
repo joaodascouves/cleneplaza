@@ -7,7 +7,7 @@
     'styles' => Array('mirror', 'wall', 'post')
   );
 
-  if( parse_context(__FILE__) )
+  if( context_parse(__FILE__) )
     return $page_info;
 
   include 'includes/controls/mirror_control.php';
@@ -26,7 +26,7 @@
     echo make_page(Array(
       'body.inner' => ( $_SERVER['REQUEST_METHOD'] !== 'POST' ?
         get_view('mirror.insert') :
-        mirror_check_and_insert($_POST['url'])['message']
+        mirror_check_and_insert($_POST)['message']
       )
     ));
   }

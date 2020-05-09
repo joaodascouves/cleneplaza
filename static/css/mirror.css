@@ -28,5 +28,12 @@
   height: 498px;
 }
 
+#url-input {
+  position: absolute;
+  margin: 10px;
+  width: 85%;
+  bottom: 30px;
+}
+
 @media (max-width: 480px) {
 }

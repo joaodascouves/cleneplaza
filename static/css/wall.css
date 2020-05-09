@@ -1,4 +1,4 @@
-input[type=checkbox] {
+input[type=checkbox], select {
   vertical-align: top;
 }
 
@@ -27,7 +27,7 @@ input[type=checkbox] {
 
 #wall-options-container ul {
   margin: 0;
-  padding: 0 0 1% 0;
+  padding: 0 0 0.8% 0;
   list-style-type: none;
   overflow: hidden;
   vertical-align: top;
@@ -35,7 +35,7 @@ input[type=checkbox] {
 
 #wall-options-container li {
   float: left;
-  padding-right: 3%;
+  padding-right: 2%;
 }
 
 #wall-options-container li.right-tab {
@@ -50,13 +50,19 @@ input[type=checkbox] {
   height: 300px;
   margin: 0 1.03vw 1% 0;
   border: 1px solid black;
+  border-radius: 10px;
   background: var(--secondary-bg-color);
+}
+
+.wall-image-container:hover {
+  top: -3px;
 }
 
 .wall-image-file {
   width: 21.8vw;
   height: 80%;
   padding: 25px 0.5vw 1px 0.5vw;
+  object-fit: cover;
   /* margin: auto; */
 }
 

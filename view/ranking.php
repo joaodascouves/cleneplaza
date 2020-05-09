@@ -6,7 +6,7 @@
     'permission' => Array('admin', 'mod', 'user')
   );
 
-  if( parse_context(__FILE__) )
+  if( context_parse(__FILE__) )
     return $page_info;
 
   echo make_page(Array(

@@ -8,7 +8,7 @@
     'align' => 'right'
   );
 
-  if( parse_context(__FILE__) )
+  if( context_parse(__FILE__) )
     return $page_info;
 
   include_once 'includes/controls/user_control.php';
@@ -19,7 +19,7 @@
     user_get_by_id(validate_natural_num($_GET['profile_id'])) :
     current_user_get() );
 
-  if( !$edit )
+  if( !$edit && $user )
   {
     $user = array_merge($user,
       Array('posts_count' => user_posts_count_by_id($user['ID']))
