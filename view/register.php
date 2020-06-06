@@ -10,7 +10,7 @@
   if( context_parse(__FILE__) )
     return $page_info;
 
-  include 'includes/controls/account_control.php';
+  include 'includes/controls/account.control.php';
 
   if( @strcmp($_COOKIE['token'], md5($_COOKIE['answer'] . $config['salt'])) )
   {

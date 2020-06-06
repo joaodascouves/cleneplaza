@@ -14,7 +14,7 @@
     'body.inner' => (
       $config['public_wall'] || current_user_privilege() !== 'guest' ?
 
-      get_view('post.wall', Array(
+      get_view('post/wall', Array(
         'offset' => ( @is_numeric($_GET['offset']) ? $_GET['offset'] : 0 )
 
       )) :

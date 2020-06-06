@@ -9,7 +9,7 @@
   if( context_parse(__FILE__) )
     return $page_info;
 
-  include 'includes/controls/saloon_control.php';
+  include 'includes/controls/saloon.control.php';
 
   if( !@empty(($alias = $_GET['alias'])) && !@empty(($action = $_GET['action'])) )
   {

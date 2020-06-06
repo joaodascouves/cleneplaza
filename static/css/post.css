@@ -89,6 +89,9 @@ p {
 }
 
 @media (max-width: 480px) {
+  .comment-container {
+    max-width: 92.5%;
+  }
   .post-container-main {
     max-width: 92.5%;
   }

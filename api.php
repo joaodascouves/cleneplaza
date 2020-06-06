@@ -48,7 +48,7 @@
 
   if( !@empty($context = $_GET['context']) && !@empty($action = $_GET['action']) )
   {
-    $control_file = "includes/controls/{$context}_control.php";
+    $control_file = "includes/controls/{$context}.control.php";
     $action_name = "{$context}_{$action}";
 
     if( file_exists($control_file) )

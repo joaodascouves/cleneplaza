@@ -11,7 +11,7 @@
   if( context_parse(__FILE__) )
     return $page_info;
 
-  include_once 'includes/controls/user_control.php';
+  include_once 'includes/controls/user.control.php';
 
   $edit = !@strcmp('edit', $_GET['action']);
 
@@ -32,10 +32,10 @@
 
       ( $_SERVER['REQUEST_METHOD'] === 'POST' ?
         user_update($_POST) :
-        get_view('profile.form', $user)
+        get_view('profile/form', $user)
       ) :
 
-      get_view('profile.display', $user)
+      get_view('profile/display', $user)
       )
 
   ));

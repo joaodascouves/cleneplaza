@@ -9,7 +9,7 @@
   if( context_parse(__FILE__ ) )
     return $page_info;
 
-  include 'includes/controls/comment_control.php';
+  include 'includes/controls/comment.control.php';
 
   $comment_result = comment_message_insert(array_merge($_POST, $_FILES));
 

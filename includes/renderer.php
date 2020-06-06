@@ -6,7 +6,7 @@ include 'controls/core.php';
   Processes HTML replacing double brackets with array data, or
   evaluement, then return it.
 
-  @parameter String $_page
+  @param String $_page
   @paramter Array $_replacements
   @return String
 */
@@ -27,11 +27,11 @@ function inject_content($_page, $_replacements = Array())
     }
   }
 
-  if( preg_match_all('/\{{2}\?*[ ]*(.*?)[ ]*\}{2}/s', $_page, $_matches) )
+  if( preg_match_all('/(\{{2}|<\?)[ ]*(.*?)[ ]*(\}{2}|\?>)/s', $_page, $_matches) )
   {
-    foreach( $_matches[1] as $_index => $_var )
+    foreach( $_matches[2] as $_index => $_var )
     {
-      if( strpos($_matches[0][$_index], '{{?') === 0 )
+      if( strpos($_matches[0][$_index], '<?') === 0 )
       {
         ob_start();
         eval($_var);
@@ -54,13 +54,13 @@ function inject_content($_page, $_replacements = Array())
   return trim($_page);
 }
 
-/*
-  Parses current page context based in URI, and exits if current user permissions
-  doesn't attend to it. If page was invoked internally (e.g. include), return it
-  alias name. Otherwise, returns false.
-
-  @parameter String $path
-  @return Boolean
+/**
+*  Parses current page context based in URI, and exits if current user permissions
+*  doesn't attend to it. If page was invoked internally (e.g. include), return it
+*  alias name. Otherwise, returns false.
+*
+*  @param String $path
+*  @return Boolean
 */
 function context_parse($path)
 {
@@ -93,28 +93,28 @@ function context_parse($path)
   return false;
 }
 
-/*
-  Parses and returns a HTML file located in root/view/html/,
-  applying evaluation by default.
-
-  @parameter String $name
-  @parameter Array $parameters
-  @return String
+/**
+*  Parses and returns a HTML file located in root/view/jampa/,
+*  applying evaluation by default.
+*
+*  @param String $name
+*  @param Array $parameters
+*  @return String
 */
 function get_view($name, $parameters = Array())
 {
   global $config;
 
-  if( file_exists(($path = "{$config['siteroot']}/view/html/{$name}.html")) )
+  if( file_exists(($path = "{$config['siteroot']}/view/jampa/{$name}.jampa.php")) )
     return inject_content(@file_get_contents($path), $parameters);
 }
 
-/*
-  Builds an Array object containing title, context and priority
-  of pages which current user has access to. If any of this pages throw error,
-  the page will fail to execute.
-
-  @return Array
+/**
+*  Builds an Array object containing title, context and priority
+*  of pages which current user has access to. If any of this pages throw error,
+*  the page will fail to execute.
+*
+*  @return Array
 */
 function make_menu()
 {
@@ -157,14 +157,15 @@ function make_menu()
   return $menu;
 }
 
-/*
-  This function is an alias for make_page('default' ...).
-  Returns the parsed view with some additional options.
-
-  @parameter Array $replacements
-  @parameter Boolean $with_menu
-  @parameter Boolean $with_banner
-  @parameter Boolean $with_bottom
+/**
+*  This function is an alias for make_page('default' ...).
+*  Returns the parsed view with some additional options.
+*
+*  @param Array $replacements
+*  @param Boolean $with_menu
+*  @param Boolean $with_banner
+*  @param Boolean $with_bottom
+*  @return String
 */
 function make_page($replacements, $with_menu=true, $with_banner=true, $with_bottom=true)
 {

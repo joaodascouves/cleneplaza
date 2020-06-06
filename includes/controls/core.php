@@ -1,12 +1,13 @@
 <?php
 
-  include 'user_control.php';
-  include 'moderate_control.php';
+  include 'user.control.php';
+  include 'moderate.control.php';
+  include 'coins.control.php';
 
-  /*
-    Returns user object stored in /includes/controls/login.php.
-
-    @return Array
+  /**
+  *  Returns user object stored in /includes/controls/login.php.
+  *
+  *  @return Array
   */
   function current_user_get()
   {
@@ -20,11 +21,11 @@
     return $user;
   }
 
-  /*
-    Alias for current_user_get()['level'].
-    If level is empty, returns 'guest'.
-
-    @return String
+  /**
+  *  Alias for current_user_get()['level'].
+  *  If level is empty, returns 'guest'.
+  *
+  *  @return String
   */
   function current_user_privilege()
   {
@@ -32,11 +33,11 @@
     return $level;
   }
 
-  /*
-    Returns a boolean indicating if scripts are either enabled
-    our disabled.
-
-    @return Boolean
+  /**
+  *  Returns a boolean indicating if scripts are either enabled
+  *  our disabled.
+  *
+  *  @return Boolean
   */
   function no_script()
   {
@@ -45,16 +46,16 @@
   }
 
 
-  /*
-    Parse $file applying proper filters. If the file passes it all,
-    it is uploaded on the specific context folder, than given a upload name and a checkfile_sum.
-    Otherwise, an integer is returned. $specifier is a variable used merely for convenience
-    with the post_image_insert function (includes/control/post_control.php).
-
-    @parameter $file Array
-    @parameter $context String
-    @parameter $specifier String
-    @return Array
+  /**
+  *  Parse $file applying proper filters. If the file passes it all,
+  *  it is uploaded on the specific context folder, than given a upload name and a checkfile_sum.
+  *  Otherwise, an integer is returned. $specifier is a variable used merely for convenience
+  *  with the post_image_insert function (includes/control/post.control.php).
+  *
+  *  @param Array $file
+  *  @param String $context
+  *  @param String $specifier
+  *  @return Array
   */
   function parse_and_upload_image($file, $context, $specifier='')
  {
@@ -173,12 +174,12 @@
     }
   }
 
-  /*
-    Virtually deletes a context entry from database.
-
-    @parameter Array $parameters
-    @parameter String $context
-    @return Array
+  /**
+  *  Virtually deletes a context entry from database.
+  *
+  *  @param Array $parameters
+  *  @param String $context
+  *  @return Array
   */
   function context_delete_by_id($parameters, $context)
   {
@@ -205,22 +206,43 @@
         'message'=> 'Couldn\'t delete entry from database.'
       );
 
+    $trimmed_context = substr($context, 0, -1);
+
+    $query = mysqli_query($conn, sprintf("SELECT `amount` FROM `cl_coins` WHERE
+      `opcode`='credit' AND `subject_context`='%s' AND `subject_id`=%d",
+      
+        $trimmed_context,
+        $entry_id));
+
+    $amount = $query ? mysqli_fetch_array($query)[0] : 0;
+
+    if( $amount>0 )
+    {
+      if( ($result = debit_current_user($amount, $entry_id, $trimmed_context, 'entry deleted'))['status'] )
+        return $result;
+    }
+
     return Array(
       'status' => 0,
       'message'=> 'Entry deleted from database.'
     );
   }
 
-  /*
-    Fetchs specified range of rows for context $context.
-
-    @parameter
-    @return Array
+  /**
+  *  Fetchs specified range of rows for context $context.
+  *
+  *  @param Array $parameters
+  *  @param String $context
+  *  @param Array $items
+  *  @param Array $where
+  *  @return Array
   */
   function collection_fetch($parameters, $context, $items, $where = Array(), $with_opts=true)
   {
     global $config;
     global $conn;
+
+    $balance = current_user_balance()['amount'];
 
     $limit = @validate_natural_num($parameters['limit']);
     $limit = ( $limit > 0 && $limit <= 48 ? $limit : 47);
@@ -272,7 +294,8 @@
       return Array(
         'status' => 0,
         'message'=>'',
-        'wall' => Array()
+        'wall' => Array(),
+        'balance' => $balance
       );
     }
 
@@ -298,15 +321,16 @@
     return Array(
       'status' => 0,
       'message'=>'',
-      'wall' => $wall
+      'wall' => $wall,
+      'balance' => $balance
     );
   }
 
-  /*
-    Checks if current user has already created a entry within x seconds.
-
-    @parameter String context
-    @return Array
+  /**
+  *  Checks if current user has already created a entry within x seconds.
+  *
+  *  @param String context
+  *  @return Array
   */
   function anti_flood_step($context)
   {

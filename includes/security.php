@@ -12,17 +12,17 @@
   {
     global $conn;
 
-    $string = stripslashes(urldecode($string));
-    $string = htmlentities($string, ENT_QUOTES);
-    $string = strip_tags($string);
-    $string = mysqli_real_escape_string($conn, $string);
-
     if( $extended_replace )
       $string = str_replace(
         Array('(', ')', '=', '..', '[', ']', ';'),
         Array('&lpar;', '&rpar;', '&equals;', '&period;&period;', '&lsqb;', '&rsqb;', '&semi;'),
         $string
       );
+
+    $string = stripslashes(urldecode($string));
+    $string = htmlentities($string, ENT_QUOTES);
+    $string = strip_tags($string);
+    $string = mysqli_real_escape_string($conn, $string);
 
     return $string;
   }

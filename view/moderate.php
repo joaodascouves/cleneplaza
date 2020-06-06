@@ -9,7 +9,7 @@
   if( context_parse(__FILE__) )
     return $page_info;
 
-  include_once 'includes/controls/moderate_control.php';
+  include_once 'includes/controls/moderate.control.php';
 
   if( $_SERVER['REQUEST_METHOD'] === 'POST' && !@strcmp('true', $_GET['confirm']) )
   {
@@ -24,7 +24,7 @@
 
     else
     {
-      $result = get_view(( !$sanitize['user_flag'] ? 'moderate.user' : 'moderate.object'),
+      $result = get_view(( !$sanitize['user_flag'] ? 'moderate/user' : 'moderate/object'),
         Array(
           'parameters' => $sanitize['parameters'],
           'entry' => $sanitize['entry']

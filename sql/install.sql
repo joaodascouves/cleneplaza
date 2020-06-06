@@ -117,7 +117,13 @@ CREATE TABLE `cl_coins`
 (
   `ID`  INTEGER PRIMARY KEY AUTO_INCREMENT,
   `user_id` INTEGER NOT NULL,
-  `amount`  INTEGER DEFAULT 0,
+
+  `subject_id`  INTEGER DEFAULT NULL,
+  `subject_context` VARCHAR(60) DEFAULT NULL,
+
+  `amount`  FLOAT DEFAULT 0.0,
+  `opcode`  ENUM('credit', 'debit') NOT NULL,
+  `description` VARCHAR(60) NOT NULL,
 
   `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -146,18 +152,22 @@ CREATE TABLE `cl_news`
 
 INSERT INTO `cl_saloons` (
   `name`,
-  `alias`
+  `alias`,
+  `rules`
 ) VALUES (
-  'Testing saloon',
-  'testing'
+  'Clening saloon',
+  'clening',
+  'Clenes de qualquer natureza, proibido pornografia.'
 );
 
 INSERT INTO `cl_saloons` (
   `name`,
-  `alias`
+  `alias`,
+  `rules`
 ) VALUES (
-  'Clening saloon',
-  'clening'
+  'Testing saloon',
+  'testing',
+  'Salão de teste.'
 );
 
 INSERT INTO `cl_users` (

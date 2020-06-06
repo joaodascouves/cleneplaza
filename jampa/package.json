@@ -1,0 +1,25 @@
+{
+    "name": "jampa",
+    "displayName": "jampa",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.45.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "jampa",
+            "aliases": ["Jampa", "jampa"],
+            "extensions": [".jampa"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "jampa",
+            "scopeName": "source.php",
+            "path": "./syntaxes/jampa.tmLanguage.json"
+        }]
+    }
+}

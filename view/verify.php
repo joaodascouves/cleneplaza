@@ -9,7 +9,7 @@
   if( context_parse(__FILE__) )
     return $page_info;
 
-  include 'includes/controls/account_control.php';
+  include 'includes/controls/account.control.php';
 
   echo make_page(Array(
     'body.inner' => @account_verify($_GET['email'], $_GET['token'])['message']

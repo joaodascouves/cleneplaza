@@ -25,6 +25,10 @@ input[type=checkbox], select {
   font-size: 13px;
 }
 
+#wall-options-container nav {
+  margin-bottom: 15px;
+}
+
 #wall-options-container ul {
   margin: 0;
   padding: 0 0 0.8% 0;
