@@ -2,13 +2,13 @@
 
 include 'controls/core.php';
 
-/*
-  Processes HTML replacing double brackets with array data, or
-  evaluement, then return it.
-
-  @param String $_page
-  @paramter Array $_replacements
-  @return String
+/**
+*  Processes HTML replacing double brackets with array data, or
+*  evaluement, then return it.
+*
+*  @param String $_page
+*  @param Array $_replacements
+*  @return String
 */
 function inject_content($_page, $_replacements = Array())
 {
@@ -89,6 +89,15 @@ function context_parse($path)
   preg_match('/\/([^\/]+)(?=\.php)/', $path, $match);
   if( @strcmp($_GET['context'], $match[1]) )
     return $match[1];
+
+  $GLOBALS['page'] = $page_info;
+  // $GLOBALS['page']['subtitle'] = 'test';
+
+  if( isset($_GET['action']) )
+    $GLOBALS['page']['subtitle'] = $_GET['action'];
+
+  // if( !defined('PAGE_TITLE') )
+  //   define('PAGE_TITLE', $page_info['title']);
 
   return false;
 }
